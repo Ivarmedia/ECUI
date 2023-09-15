@@ -6,6 +6,7 @@ export class Loader {
     logoContainer;
     logo;
     classes;
+    styleSheet;
 
     constructor(structure, theme) {
         this.classes = theme.classes;
@@ -35,32 +36,35 @@ export class Loader {
 
         spinnerContainer.appendChild(spinnerBackground);
 
-        for(var i=0; i<2; i++) {
-            var spinner = document.createElement("div");
-            spinner.className = "ECUI-General-Loader-spinner";
+        var spinner = document.createElement("div");
+        spinner.className = "ECUI-General-Loader-spinner";
 
-            for(var j=0; j<3; j++) {
-                var spinnerRing = document.createElement("div");
-                spinnerRing.className = `${this.classes.spinner} ECUI-General-Loader-spinner-ring`;
-                spinner.appendChild(spinnerRing);
-            }
-
-            spinnerContainer.appendChild(spinner);
+        for(var i=0; i<3; i++) {
+            var spinnerRing = document.createElement("div");
+            spinnerRing.className = `${this.classes.spinner} ECUI-General-Loader-spinner-ring`;
+            spinner.appendChild(spinnerRing);
         }
+
+        spinnerContainer.appendChild(spinner);
         
         this.logoContainer = document.createElement("div");
         this.logoContainer.className = "ECUI-General-Loader-Logo-Container";
         spinnerContainer.appendChild(this.logoContainer);
-        this.setLoaderImg();
+        this.setLoaderImg(theme.spinnerLogo);
 
         this.screen.appendChild(spinnerContainer);
         structure.appendChild(this.screen);
     }
 
     setLoaderImg(url) {
+        if(this.logo) {
+            this.logo.remove();
+        }
 
         if(!Utils.isNullOrEmpty(url)) {
-
+            this.logo = document.createElement("img");
+            this.logo.className = "ECUI-General-Loader-Logo-Img";
+            this.logo.src = url;
         } else {
             this.logo = document.createElement("div");
             this.logo.className = "ECUI-General-Loader-Logo";
@@ -80,9 +84,9 @@ export class Loader {
     }
 
     buildCss() {
-        var loaderCss = document.createElement('style');
-        loaderCss.setAttribute('type', 'text/css');
-        loaderCss.id = "ECUI-Loader-Style";
+        this.styleSheet = document.createElement('style');
+        this.styleSheet.setAttribute('type', 'text/css');
+        this.styleSheet.id = "ECUI-Loader-Style";
     
         var cssRules = `
             .ECUI-General-Loader-Container { width: 100%; height: 100%; position: absolute; left: 0px; top: 0px; display: flex; flex-direction: row; justify-content: center; align-items: center }
@@ -92,16 +96,16 @@ export class Loader {
             .ECUI-General-Loader-Background-Out-Shadow { width: 140px; height: 140px; position: absolute; border-radius: 50%; box-shadow: inset 0px 0px 10px #0000000f; }
             .ECUI-General-Loader-Background-In-Shadow { width: 120px; height: 120px; position: absolute; border-radius: 50%; left: 50%; top: 50%; transform: translate(-50%, -50%); box-shadow: 0px 0px 10px #0000000f; }
             .ECUI-General-Loader-spinner { width: 140px; height: 140px; position: absolute; display: inline-block; filter: blur(0.5px); }
-            .ECUI-General-Loader-spinner:nth-child(2) { filter: blur(3px); opacity: 0.6 }
-            .ECUI-General-Loader-spinner-ring { position: absolute; margin: 3px; width: 134px; height: 134px; border-radius: 50%; border-style: solid; border-width: 5px; border-bottom-color: transparent; border-left-color: transparent; border-right-color: transparent; animation: generalSpinnerRing 1.2s linear infinite; }
+            .ECUI-General-Loader-spinner-ring { position: absolute; margin: 3px; width: 134px; height: 134px; border-radius: 50%; border-style: solid; border-width: 5px; border-bottom-color: transparent!important; border-left-color: transparent!important; border-right-color: transparent!important; animation: generalSpinnerRing 1.2s linear infinite; }
             .ECUI-General-Loader-spinner .ECUI-General-Loader-spinner-ring:nth-child(1) { animation-delay: 0.15s; }
             .ECUI-General-Loader-spinner .ECUI-General-Loader-spinner-ring:nth-child(2) { animation-delay: 0.3s; }
             .ECUI-General-Loader-Logo-Container { width: 100%; height: 100%; position: relative; display: flex; flex-direction: row; justify-content: center; align-items: center; }
             .ECUI-General-Loader-Logo { width: 56px; height: 56px; position: relative }
+            .ECUI-General-Loader-Logo-Img { width: 76px; height: 56px; position: relative; object-fit: contain; }
             .ECUI-General-Loader-Logo-Lines { width: 56px; height: 56px; position: relative; filter: blur(0.2px); }
             .ECUI-General-Loader-Logo-Line-First { fill:none; stroke-width:64; stroke-dasharray: 300; stroke-dashoffset: 360; animation: generalSpinnerLogoFirstLine 6s linear infinite; animation-delay: 0.8s; }
             .ECUI-General-Loader-Logo-Line-Second { fill:none; stroke-width:64; stroke-dasharray: 800; stroke-dashoffset: -700; animation: generalSpinnerLogoSecondLine 6s linear infinite; animation-delay: 0.6s; }
-            .ECUI-General-Loader-Logo-Squares-Container { width: 16.4px; height: 16.4px; position: absolute; top: 0px; left: 0px; filter: blur(0.5px); }
+            .ECUI-General-Loader-Logo-Squares-Container { width: 16.4px; height: 16.4px; position: absolute; top: 0px; left: 0px; filter: blur(0.2px); }
             .ECUI-General-Loader-Logo-Square:nth-child(1) { position: absolute; width: 7.4px; left: 0px; top: 0px; animation: generalSpinnerLogoSquare 6s linear infinite; transform: rotate(0deg) scale(0); animation-delay: 0.5s; }
             .ECUI-General-Loader-Logo-Square:nth-child(2) { position: absolute; width: 9px; right: 0px; bottom: 0px; animation: generalSpinnerLogoSquare 6s linear infinite; transform: rotate(0deg) scale(0); animation-delay: 0.6s; }
             @keyframes generalSpinner { 0% { opacity: 0; } 100% { opacity: 1; } }
@@ -111,13 +115,13 @@ export class Loader {
             @keyframes generalSpinnerLogoSecondLine { 0% { stroke-dashoffset: -700; } 5% { stroke-dashoffset: 0; } 70% { stroke-dashoffset: 0; } 75% { stroke-dashoffset: 800; } 100% { stroke-dashoffset: 800; }}
         `;
     
-        if (loaderCss.styleSheet) {
-            loaderCss.styleSheet.cssText = cssRules;
+        if (this.styleSheet.styleSheet) {
+            this.styleSheet.styleSheet.cssText = cssRules;
         } else {
-            loaderCss.appendChild(document.createTextNode(cssRules));
+            this.styleSheet.appendChild(document.createTextNode(cssRules));
         }
     
-        document.head.appendChild(loaderCss);
+        document.head.appendChild(this.styleSheet);
     }
 
 }

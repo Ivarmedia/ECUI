@@ -2,12 +2,15 @@ import * as Utils from "../../../Module/Utils.js";
 
 export class Theme {
 
+    ECUI;
     styleSheet;
     classes;
     colours;
     backgroundImg;
+    spinnerLogo;
 
-    constructor(theme) {
+    constructor(theme, global) {
+        this.ECUI = global;
 
         this.classes = {};
         this.colours = {};
@@ -15,6 +18,10 @@ export class Theme {
         
         if(!Utils.isNullOrEmpty(theme.backgroundImg) ) {
             this.setBackgroundImg(theme.backgroundImg);
+        }
+
+        if(!Utils.isNullOrEmpty(theme.spinnerLogo) ) {
+            this.setSpinnerLogo(theme.spinnerLogo);
         }
 
         if(theme.colours != null && !Utils.isNullOrEmpty(theme.colours.backgroundOpacity) ) {
@@ -192,6 +199,16 @@ export class Theme {
 
     setBackgroundImg(url) {
         this.backgroundImg = url;
+        if(this.ECUI.layout != null && this.ECUI.layout.background != null) {
+            this.ECUI.layout.background.loadImg(url);
+        }
+    }
+
+    setSpinnerLogo(url) {
+        this.spinnerLogo = url;
+        if(this.ECUI.layout != null && this.ECUI.layout.loader != null) {
+            this.ECUI.layout.loader.setLoaderImg(url);
+        }
     }
 
     setHeaderColour(colour) {
