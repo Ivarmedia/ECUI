@@ -7,18 +7,31 @@ export class ECUI {
     layout;
     areas;
     panels;
+    components;
 
     constructor(container, themeInfo) {
         var theme = manager.buildTheme(themeInfo);
         this.interface = manager.setInterface(container, theme, this);
     };
 
-    initPanels(panels) {
-        this.interface.initPanels(panels);
+    buildTheme(theme) {
+        this.interface.buildTheme(theme);
     }
 
     loadPanels(panels) {
         this.interface.loadPanels(panels);
+    }
+
+    loadComponents(components) {
+        this.interface.loadComponents(components);
+    }
+
+    displayLoader() {
+        this.interface.displayLoader();
+    }
+
+    removeLoader() {
+        this.interface.removeLoader();
     }
 
 }

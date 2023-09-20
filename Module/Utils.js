@@ -2,7 +2,7 @@
 export function isNullOrEmpty(string) {
     if(string == null) {
         return true;
-    } else if (string.lenght == 0) {
+    } else if (string == "") {
         return true;
     } else {
         return false;

@@ -2,12 +2,14 @@ import * as Utils from "../../../Module/Utils.js";
 
 export class Theme {
 
-    styleSheet;
+    ECUI;
     classes;
     colours;
     backgroundImg;
+    spinnerLogo;
 
-    constructor(theme) {
+    constructor(theme, global) {
+        this.ECUI = global;
 
         this.classes = {};
         this.colours = {};
@@ -15,6 +17,10 @@ export class Theme {
         
         if(!Utils.isNullOrEmpty(theme.backgroundImg) ) {
             this.setBackgroundImg(theme.backgroundImg);
+        }
+
+        if(!Utils.isNullOrEmpty(theme.spinnerLogo) ) {
+            this.setSpinnerLogo(theme.spinnerLogo);
         }
 
         if(theme.colours != null && !Utils.isNullOrEmpty(theme.colours.backgroundOpacity) ) {
@@ -65,6 +71,10 @@ export class Theme {
             this.setFrameHoverColour(theme.colours.frameHover);
         }
 
+        if(theme.colours != null && !Utils.isNullOrEmpty(theme.colours.primaryLogo)) {
+            this.setPrimaryLogoColour(theme.colours.primaryLogo);
+        }
+
         if(theme.colours != null && !Utils.isNullOrEmpty(theme.colours.primaryIcon) ) {
             this.setPrimaryIconColour(theme.colours.primaryIcon);
             if(!Utils.isNullOrEmpty(theme.colours.secondaryIcon)) {
@@ -73,8 +83,8 @@ export class Theme {
             if(!Utils.isNullOrEmpty(theme.colours.spinner)) {
                 this.setSpinnerColour(theme.colours.spinner);
             }
-            if(!Utils.isNullOrEmpty(theme.colours.primaryLogo)) {
-                this.setPrimaryLogoColour(theme.colours.primaryLogo);
+            if(!Utils.isNullOrEmpty(theme.colours.primarySpinnerLogo)) {
+                this.setPrimarySpinnerLogoColour(theme.colours.primarySpinnerLogo);
             }
         } else {
             this.setPrimaryIconColour("hsl(210.69deg 70.73% 51.76%)");
@@ -96,6 +106,12 @@ export class Theme {
             this.setSecondaryLogoColour("hsl(0deg 0% 100%)");
         }
 
+        if(theme.colours != null && !Utils.isNullOrEmpty(theme.colours.secondarySpinnerLogo)) {
+            this.setSecondarySpinnerLogoColour(theme.colours.secondarySpinnerLogo);
+        } else {
+            this.setSecondarySpinnerLogoColour("hsl(0deg 0% 100%)");
+        }
+
         if(theme.colours != null && !Utils.isNullOrEmpty(theme.colours.hover) ) {
             this.setHoverColour(theme.colours.hover);
         } else {
@@ -105,22 +121,23 @@ export class Theme {
     };
 
     createStyleSheet(cssRules) {
-        this.styleSheet = document.createElement('style');
-        this.styleSheet.setAttribute('type', 'text/css');
-        this.styleSheet.id = "ECUI-Brand-Style";
+        var styleSheet = document.createElement('style');
+        styleSheet.setAttribute('type', 'text/css');
+        styleSheet.id = "ECUI-Brand-Style";
 
-        if (this.styleSheet.styleSheet) {
-            this.styleSheet.styleSheet.cssText = cssRules;
+        if (styleSheet.styleSheet) {
+            styleSheet.styleSheet.cssText = cssRules;
         } else {
-            this.styleSheet.appendChild(document.createTextNode(cssRules));
+            styleSheet.appendChild(document.createTextNode(cssRules));
         }
 
-        document.head.appendChild(this.styleSheet);
+        document.head.appendChild(styleSheet);
     }
 
     removeStyleSheet() {
-        if(this.styleSheet) {
-            this.styleSheet.remove();
+        var styleSheet = document.getElementById("ECUI-Brand-Style");
+        if(styleSheet) {
+            styleSheet.remove();
         }
     }
 
@@ -170,8 +187,14 @@ export class Theme {
             .${this.classes.secondaryLogo} {
                 fill: ${this.colours.secondaryLogo};
             }
-            .${this.classes.secondaryLogoLines} {
-                stroke: ${this.colours.secondaryLogoLines};
+            .${this.classes.primarySpinnerLogo} {
+                fill: ${this.colours.primarySpinnerLogo};
+            }
+            .${this.classes.secondarySpinnerLogo} {
+                fill: ${this.colours.secondarySpinnerLogo};
+            }
+            .${this.classes.secondarySpinnerLogoLines} {
+                stroke: ${this.colours.secondarySpinnerLogoLines};
             }
             .${this.classes.primaryText} {
                 color: ${this.colours.primaryText};
@@ -179,7 +202,7 @@ export class Theme {
             .${this.classes.secondaryText} {
                 color: ${this.colours.secondaryText};
             }
-            .${this.classes.hover}:hover {
+            .ECUI-Selectable-Object:hover .${this.classes.hover} {
                 background-color: ${this.colours.hover};
             }
             .${this.classes.opacity} {
@@ -192,6 +215,16 @@ export class Theme {
 
     setBackgroundImg(url) {
         this.backgroundImg = url;
+        if(this.ECUI.layout != null && this.ECUI.layout.background != null) {
+            this.ECUI.layout.background.loadImg(url);
+        }
+    }
+
+    setSpinnerLogo(url) {
+        this.spinnerLogo = url;
+        if(this.ECUI.layout != null && this.ECUI.layout.loader != null) {
+            this.ECUI.layout.loader.setLoaderImg(url);
+        }
     }
 
     setHeaderColour(colour) {
@@ -216,6 +249,7 @@ export class Theme {
         var frame = Utils.sustractColourLightness(colour, 6);
         this.setFrameColour(frame);
         this.setFrameBorderColour(border);
+        this.setPrimaryLogoColour(colour);
         this.refreshStyleSheet(); 
     }
 
@@ -264,7 +298,7 @@ export class Theme {
         this.colours.primaryIcon = colour;
         this.setSecondaryIconColour(colour);
         this.setSpinnerColour(colour);
-        this.setPrimaryLogoColour(colour);
+        this.setPrimarySpinnerLogoColour(colour);
         this.refreshStyleSheet(); 
     }
 
@@ -281,16 +315,28 @@ export class Theme {
     }
 
     setPrimaryLogoColour(colour) {
-        this.classes.primaryLogo = "ECUI-Brand-Style-Spinner-Primary-Logo";
+        this.classes.primaryLogo = "ECUI-Brand-Style-Primary-Logo";
         this.colours.primaryLogo = colour;
         this.refreshStyleSheet(); 
     }
 
     setSecondaryLogoColour(colour) {
-        this.classes.secondaryLogo = "ECUI-Brand-Style-Spinner-Secondary-Logo";
+        this.classes.secondaryLogo = "ECUI-Brand-Style-Secondary-Logo";
         this.colours.secondaryLogo = colour;
-        this.classes.secondaryLogoLines = "ECUI-Brand-Style-Spinner-Secondary-Logo-Lines";
-        this.colours.secondaryLogoLines = colour;
+        this.refreshStyleSheet(); 
+    }
+
+    setPrimarySpinnerLogoColour(colour) {
+        this.classes.primarySpinnerLogo = "ECUI-Brand-Style-Spinner-Primary-Logo";
+        this.colours.primarySpinnerLogo = colour;
+        this.refreshStyleSheet(); 
+    }
+
+    setSecondarySpinnerLogoColour(colour) {
+        this.classes.secondarySpinnerLogo = "ECUI-Brand-Style-Spinner-Secondary-Logo";
+        this.colours.secondarySpinnerLogo = colour;
+        this.classes.secondarySpinnerLogoLines = "ECUI-Brand-Style-Spinner-Secondary-Logo-Lines";
+        this.colours.secondarySpinnerLogoLines = colour;
         this.refreshStyleSheet(); 
     }
 

@@ -25,7 +25,7 @@ export class Background {
         }
 
         if(!Utils.isNullOrEmpty(url)) {
-            this.img.document.createElement("img");
+            this.img = document.createElement("img");
             this.img.src = url;
             this.img.className = `${this.classes.opacity} ECUI-General-background`;
             this.container.appendChild(this.img);
@@ -33,21 +33,30 @@ export class Background {
     }
 
     buildCss() {
-        var backgroundCss = document.createElement('style');
-        backgroundCss.setAttribute('type', 'text/css');
-        backgroundCss.id = "ECUI-Background-Style";
+        this.removeStyleSheet();
+
+        var styleSheet = document.createElement('style');
+        styleSheet.setAttribute('type', 'text/css');
+        styleSheet.id = "ECUI-Background-Style";
 
         var cssRules = `
             .ECUI-General-background-Container { width: 100%; height: 100%; position: absolute; }
             .ECUI-General-background { width: 100%; height: 100%; object-fit: cover; }
         }`;
 
-        if (backgroundCss.styleSheet) {
-            backgroundCss.styleSheet.cssText = cssRules;
+        if (styleSheet.styleSheet) {
+            styleSheet.styleSheet.cssText = cssRules;
         } else {
-            backgroundCss.appendChild(document.createTextNode(cssRules));
+            styleSheet.appendChild(document.createTextNode(cssRules));
         }
 
-        document.head.appendChild(backgroundCss);
+        document.head.appendChild(styleSheet);
+    }
+
+    removeStyleSheet() {
+        var styleSheet = document.getElementById("ECUI-Background-Style");
+        if(styleSheet) {
+            styleSheet.remove();
+        }
     }
 }
