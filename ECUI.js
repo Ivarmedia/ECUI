@@ -22,6 +22,10 @@ export class ECUI {
         this.interface.loadPanels(panels);
     }
 
+    removePanels(panelsIds) {
+        this.interface.removePanels(panelsIds);
+    }
+
     loadComponents(components) {
         this.interface.loadComponents(components);
     }

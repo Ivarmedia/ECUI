@@ -10,12 +10,12 @@ export class PanelManager {
         this.ECUI = global;
     }
 
-    removeMatchingPanels(panels) {
-        panels.forEach(panel => {
-            if(this.ECUI.panels.some(p => p.id == panel.id)) {
-                var panelToRemove = this.ECUI.panels.find(p => p.id == panel.id);
+    removeMatchingPanels(panelsIds) {
+        panelsIds.forEach(panelId => {
+            if(this.ECUI.panels.some(p => p.id == panelId)) {
+                var panelToRemove = this.ECUI.panels.find(p => p.id == panelId);
                 panelToRemove.element.remove();
-                this.ECUI.panels = this.ECUI.panels.filter(p => p.id !== panel.id);
+                this.ECUI.panels = this.ECUI.panels.filter(p => p.id !== panelId);
             }
         });
     }

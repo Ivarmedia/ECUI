@@ -21,14 +21,16 @@ export class StandardUI {
     }
 
     loadPanels(panels) {
-        this.panelManager.removeMatchingPanels(panels);
+        var panelsIds = [...new Set(panels.map(panel => panel.id))];
+        this.panelManager.removeMatchingPanels(panelsIds);
         var allPanels = this.ECUI.panels.concat(panels);
         this.ECUI.layout.update(allPanels);
         this.panelManager.loadPanels(panels);
     }
 
-    removePanels(panels) {
-
+    removePanels(panelsIds) {
+        this.panelManager.removeMatchingPanels(panelsIds);
+        this.ECUI.layout.update(this.ECUI.panels);
     }
 
     loadComponents(components) {
