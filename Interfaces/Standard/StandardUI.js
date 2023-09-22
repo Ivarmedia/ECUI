@@ -37,6 +37,10 @@ export class StandardUI {
 
     }
 
+    removeComponents(components) {
+        
+    }
+
     displayLoader() {
         this.ECUI.layout.loader.display();
     }

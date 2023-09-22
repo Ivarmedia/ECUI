@@ -60,6 +60,7 @@ ECUI.loadPanels([
                                         component: "navOption",
                                         icon: "addCompany",
                                         text: "Create New Company",
+                                        disabled: true
                                     },
                                     {
                                         id: "selectCompanyOption",
@@ -86,6 +87,33 @@ ECUI.loadPanels([
                                 component: "navDropdown",
                                 icon: "project",
                                 text: "Project",
+                                options: [
+                                    {
+                                        id: "addCompanyOption",
+                                        component: "navOption",
+                                        icon: "addCompany",
+                                        text: "Create New Company",
+                                        disabled: true
+                                    },
+                                    {
+                                        id: "selectCompanyOption",
+                                        component: "navOption",
+                                        icon: "company",
+                                        text: "Select Company",
+                                        options: [
+                                            {
+                                                id: "fexillonNavCompanyOption",
+                                                component: "navOption",
+                                                text: "Fexillon",
+                                            },
+                                            {
+                                                id: "snclNavCompanyOption",
+                                                component: "navOption",
+                                                text: "SNCL",
+                                            }
+                                        ]
+                                    }
+                                ]
                             },
                             { 
                                 id: "buildingNavDropdown",

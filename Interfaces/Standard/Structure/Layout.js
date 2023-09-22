@@ -140,14 +140,14 @@ export class Layout {
         }
 
         cssRules += `
-            .ECUI-Layout-Workspace-Area { width: 100%; height: calc(100% - ${navigationHeight}px); position: relative; }
+            .ECUI-Layout-Workspace-Area { width: 100%; height: calc(100% - ${navigationHeight}px); position: relative; display: flex; flex-direction: row; gap: 1px; padding: 1px 0px; }
         `;
 
         if(areas.some(area => area == "actionBar")) {
             cssRules += `
-                .ECUI-Layout-Action-Bar-Area { width: 38px; height: 100%); position: relative; }
+                .ECUI-Layout-Action-Bar-Area { width: 36px; height: 100%; position: relative; display: flex; flex-direction: row; }
             `;
-            centerWidth += 38;
+            centerWidth += 36;
         }
 
         if(areas.some(area => area == "left")) {
@@ -164,9 +164,23 @@ export class Layout {
             centerWidth += 280;
         }
 
-        cssRules += `
-            .ECUI-Layout-Center-Area { width: calc(100% - ${centerWidth}px); height: 100%; position: relative; }
-        `;
+        if(areas.some(area => area == "centerTop")) {
+            if (areas.some(area => area == "centerBottomLeft") || areas.some(area => area == "centerBottomRight")) {
+                cssRules += ` .ECUI-Layout-Center-Area { width: calc(100% - ${centerWidth}px); height: 100%; position: relative; display: grid; grid-template-areas: 'centerTop centerTop' 'centerBottomLeft centerBottomRight'; grid-gap: 1px; } `;
+            } else {
+                cssRules += ` .ECUI-Layout-Center-Area { width: calc(100% - ${centerWidth}px); height: 100%; position: relative; display: grid; grid-template-areas: 'centerTop centerTop' 'centerBottom centerBottom'; grid-gap: 1px; } `;
+            }
+        } else if(areas.some(area => area == "centerBottom")) {
+            if (areas.some(area => area == "centerTopLeft") || areas.some(area => area == "centerTopRight")) {
+                cssRules += ` .ECUI-Layout-Center-Area { width: calc(100% - ${centerWidth}px); height: 100%; position: relative; display: grid; grid-template-areas: 'centerTopLeft centerTopRight' 'centerBottom centerBottom'; grid-gap: 1px; } `;
+            } else {
+                cssRules += ` .ECUI-Layout-Center-Area { width: calc(100% - ${centerWidth}px); height: 100%; position: relative; display: grid; grid-template-areas: 'centerTop centerTop' 'centerBottom centerBottom'; grid-gap: 1px; } `;
+            }
+        } else {
+            cssRules += `
+                .ECUI-Layout-Center-Area { width: calc(100% - ${centerWidth}px); height: 100%; position: relative; }
+            `;
+        }
 
         if (styleSheet.styleSheet) {
             styleSheet.styleSheet.cssText = cssRules;

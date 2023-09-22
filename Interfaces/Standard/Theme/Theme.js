@@ -7,6 +7,7 @@ export class Theme {
     colours;
     backgroundImg;
     spinnerLogo;
+    font;
 
     constructor(theme, global) {
         this.ECUI = global;
@@ -14,6 +15,11 @@ export class Theme {
         this.classes = {};
         this.colours = {};
 
+        if(!Utils.isNullOrEmpty(theme.font) ) {
+            this.setFont(theme.font);
+        } else {
+            this.setFont("sans-serif");
+        }
         
         if(!Utils.isNullOrEmpty(theme.backgroundImg) ) {
             this.setBackgroundImg(theme.backgroundImg);
@@ -69,6 +75,10 @@ export class Theme {
 
         if(theme.colours != null && !Utils.isNullOrEmpty(theme.colours.frameHover) ) {
             this.setFrameHoverColour(theme.colours.frameHover);
+        }
+
+        if(theme.colours != null && !Utils.isNullOrEmpty(theme.colours.buttonHover) ) {
+            this.setButtonHoverColour(theme.colours.buttonHover);
         }
 
         if(theme.colours != null && !Utils.isNullOrEmpty(theme.colours.primaryLogo)) {
@@ -145,6 +155,9 @@ export class Theme {
         this.removeStyleSheet();
 
         var cssRules = `
+            body {
+                font-family: ${this.font};
+            }
             .${this.classes.header} {
                 background-color: ${this.colours.header};
             }
@@ -205,12 +218,26 @@ export class Theme {
             .ECUI-Selectable-Object:hover .${this.classes.hover} {
                 background-color: ${this.colours.hover};
             }
+            .ECUI-Selectable-Object:focus .${this.classes.hover} {
+                background-color: ${this.colours.hover};
+            }
+            .${this.classes.buttonHover}:hover {
+                background-color: ${this.colours.buttonHover};
+            }
+            .${this.classes.buttonHover}:focus {
+                background-color: ${this.colours.buttonHover};
+            }
             .${this.classes.opacity} {
                 opacity: ${this.colours.opacity};
             }
         `;
 
         this.createStyleSheet(cssRules);     
+    }
+
+    setFont(font) {
+        this.font = font;
+        this.refreshStyleSheet(); 
     }
 
     setBackgroundImg(url) {
@@ -246,6 +273,8 @@ export class Theme {
         this.setPanelBordersColour(border);
         var head = Utils.sustractColourLightness(colour, 6);
         this.setPanelHeadColour(head);
+        var hover = Utils.sustractColourLightness(colour, 2);
+        this.setButtonHoverColour(hover);
         var frame = Utils.sustractColourLightness(colour, 6);
         this.setFrameColour(frame);
         this.setFrameBorderColour(border);
@@ -356,6 +385,12 @@ export class Theme {
     setHoverColour(colour) {
         this.classes.hover = "ECUI-Brand-Style-Hover";
         this.colours.hover = colour;
+        this.refreshStyleSheet(); 
+    }
+
+    setButtonHoverColour(colour) {
+        this.classes.buttonHover = "ECUI-Brand-Style-Button-Hover";
+        this.colours.buttonHover = colour;
         this.refreshStyleSheet(); 
     }
 

@@ -23,7 +23,7 @@ export class NavButton {
         this.buildCss();
 
         this.element = document.createElement("button");
-        this.element.className = `${this.ECUI.theme.classes.border} ECUI-Selectable-Object ECUI-Panel-Nav-Button`;
+        this.element.className = `${this.ECUI.theme.classes.border} ${this.ECUI.theme.classes.buttonHover} ECUI-Selectable-Object ECUI-Panel-Nav-Button`;
 
         if(this.reversed && !Utils.isNullOrEmpty(navButtonInfo.text)) {
             var text = document.createElement("div");
@@ -42,11 +42,10 @@ export class NavButton {
             }
         }
         if(!Utils.isNullOrEmpty(navButtonInfo.img)) {
-            if(!Utils.isNullOrEmpty(navButtonInfo.text)) {
-
-            } else {
-
-            }
+            var img = document.createElement("img");
+            img.className = "ECUI-Panel-Nav-Button-Image";
+            img.src = navButtonInfo.img;
+            this.element.appendChild(img);
         }
         if(!this.reversed && !Utils.isNullOrEmpty(navButtonInfo.text)) {
             var text = document.createElement("div");
@@ -73,8 +72,9 @@ export class NavButton {
             .ECUI-Panel-Nav-Unit:last-child .ECUI-Panel-Nav-Button { border-right: none!important; }
             .ECUI-Panel-Nav-Button-Text { font-size: 12px; }
             .ECUI-Panel-Nav-Button-Hover-Effect { display: none; width: 100%; height: 0px; position: absolute; left: 0px; bottom: 0px; opacity: 0; animation: navButtonHover 0.3s forwards; }
-             .ECUI-Panel-Nav-Button:hover .ECUI-Panel-Nav-Button-Hover-Effect { display: block; }
-             @keyframes navButtonHover { 0% { opacity: 0; height: 0px; } 100% { opacity: 1; height: 2px; } }
+            .ECUI-Panel-Nav-Button:hover .ECUI-Panel-Nav-Button-Hover-Effect { display: block; }
+            .ECUI-Panel-Nav-Button-Image { width: 20px; height: 20px; border-radius: 50%; object-fit: cover; }
+            @keyframes navButtonHover { 0% { opacity: 0; height: 0px; } 100% { opacity: 1; height: 2px; } }
         `;   
         
         if (styleSheet.styleSheet) {

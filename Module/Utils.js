@@ -82,4 +82,10 @@ export function sustractColourLightness(colour, sustraction) {
     }
     return colour;
 }
+
+export function getAreaClass(area) {
+    var areaClass = "";
+
+    return areaClass;
+}
   

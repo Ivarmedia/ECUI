@@ -10,7 +10,6 @@ export class Header {
     logo;
     secondaryLogoContainer;
     secondaryLogo;
-    classes;
 
     constructor(global, headerInfo) {
         this.ECUI = global;
@@ -124,7 +123,7 @@ export class Header {
         styleSheet.id = "ECUI-Header-Style";
 
         var cssRules = `
-            .ECUI-Panel-Header-Component { height: 25px; width: 100%; padding: 0 16px; display: flex; flex-direction: row; justify-content: space-between; align-items: center; }
+            .ECUI-Panel-Header-Component { height: 25px; width: 100%; padding: 0 24px 1px 24px; display: flex; flex-direction: row; justify-content: space-between; align-items: center; }
             .ECUI-Panel-Header-Left { height: 11px; width: 200px; line-height: 0px; }
             .ECUI-Panel-Header-Logo-Container { background-color: transparent; height: 11px; border: none; outline: none; margin: 0px; padding: 0px; cursor: pointer; line-height: 0px; }
             .ECUI-Panel-Header-Logo { height: 11px; object-fit: contain; object-position: left; }
