@@ -23,10 +23,14 @@ export class Theme {
         
         if(!Utils.isNullOrEmpty(theme.backgroundImg) ) {
             this.setBackgroundImg(theme.backgroundImg);
+        } else if(this.ECUI.layout && this.ECUI.layout.background.img) {
+            this.ECUI.layout.background.loadImg();
         }
 
         if(!Utils.isNullOrEmpty(theme.spinnerLogo) ) {
             this.setSpinnerLogo(theme.spinnerLogo);
+        } else if(this.ECUI.layout && this.ECUI.layout.loader.logo) {
+            this.ECUI.layout.loader.setLoaderImg();
         }
 
         if(theme.colours != null && !Utils.isNullOrEmpty(theme.colours.backgroundOpacity) ) {

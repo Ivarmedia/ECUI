@@ -8,7 +8,6 @@ import('./ECUI.js').then((ECUIModule) => {
     console.error('Module import failed:', error);
   });
 
-
   setTimeout(() => {
     ECUI.loadPanels([
       { 
@@ -256,7 +255,6 @@ import('./ECUI.js').then((ECUIModule) => {
 
     ECUI.removeLoader();
   }, 2000);
-
 
   
 
