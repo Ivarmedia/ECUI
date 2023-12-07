@@ -1,41 +1,45 @@
-import * as manager from "./Module/Interface.js";
+import * as ECUI_Manager from "./Module/Manager.js";
 
 export class ECUI {
 
-    interface;
-    theme;
-    layout;
-    areas;
-    panels;
-    components;
+    ECUI_Interface;
+    ECUI_Theme;
+    ECUI_Layout;
+    ECUI_Areas;
+    ECUI_Panels;
+    ECUI_Components;
 
     constructor(container, themeInfo) {
-        var theme = manager.buildTheme(themeInfo);
-        this.interface = manager.setInterface(container, theme, this);
+        let theme = ECUI_Manager.buildTheme(themeInfo);
+        this.ECUI_Interface = ECUI_Manager.setInterface(container, theme, this);
     };
 
     buildTheme(theme) {
-        this.interface.buildTheme(theme);
+        this.ECUI_Interface.buildTheme(theme);
     }
 
     loadPanels(panels) {
-        this.interface.loadPanels(panels);
+        this.ECUI_Interface.loadPanels(panels);
     }
 
     removePanels(panelsIds) {
-        this.interface.removePanels(panelsIds);
+        this.ECUI_Interface.removePanels(panelsIds);
     }
 
     loadComponents(components) {
-        this.interface.loadComponents(components);
+        this.ECUI_Interface.loadComponents(components);
+    }
+
+    removeComponents(componentsIds) {
+        this.ECUI_Interface.removeComponents(componentsIds);
     }
 
     displayLoader() {
-        this.interface.displayLoader();
+        this.ECUI_Interface.displayLoader();
     }
 
     removeLoader() {
-        this.interface.removeLoader();
+        this.ECUI_Interface.removeLoader();
     }
 
 }

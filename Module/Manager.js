@@ -2,13 +2,13 @@ import { StandardUI } from "../Interfaces/Standard/StandardUI.js";
 import { SpaceUI } from "../Interfaces/Space/SpaceUI.js";
 import { SecretUI } from "../Interfaces/Secret/SecretUI.js";
 import * as Utils from "./Utils.js";
+import * as Default from "../Resources/Default/Default.js";
 
 export function buildTheme(themeInfo) {
-    var theme = themeInfo;
-    if(theme == null || Utils.isNullOrEmpty(theme.style)) {
-        theme = { style: "Standard" };
+    if(themeInfo == null || Utils.isNullOrEmpty(themeInfo.style)) {
+        themeInfo = Default.getDefaultTheme();
     }
-    return theme;
+    return themeInfo;
 }
 
 export function setInterface(container, theme, global) {
