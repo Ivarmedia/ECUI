@@ -16,6 +16,10 @@ export class ECUI {
 
     buildTheme(theme) {
         this.ECUI_Interface.buildTheme(theme);
+        if(this.ECUI_Panels.length > 0) {
+            this.ECUI_Interface.loadPanels(this.ECUI_Panels);
+        }
+        
     }
 
     loadPanels(panels) {

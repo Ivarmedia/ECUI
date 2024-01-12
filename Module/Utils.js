@@ -67,18 +67,46 @@ export function getHSLColour(colour) {
     }   
 }
 
+
+
 export function sustractColourLightness(colour, sustraction) {
     let hslColour = getHSLColour(colour);
     const colourMatch = hslColour.match(/hsl\((\d+(\.\d+)?)deg (\d+(\.\d+)?)% (\d+(\.\d+)?)%\)/);
-    if(colourMatch) {
+    if (colourMatch) {
         const hue = parseFloat(colourMatch[1]);
         const saturation = parseFloat(colourMatch[3]);
         let lightness = parseFloat(colourMatch[5]);
-        lightness = lightness - sustraction;
-        if(lightness < 0) {
-            lightness = 0;
-        }
-        colour = `hsl(${hue}deg ${saturation}% ${lightness}%)`;
+
+        lightness = Math.max(0, lightness - sustraction);
+        const adjustedSaturation = saturation * (1 - lightness / 100);
+        colour = `hsl(${hue}deg ${adjustedSaturation}% ${lightness}%)`;
+    }
+    return colour;
+}
+
+export function addColourLightness(colour, addition) {
+    let hslColour = getHSLColour(colour);
+    const colourMatch = hslColour.match(/hsl\((\d+(\.\d+)?)deg (\d+(\.\d+)?)% (\d+(\.\d+)?)%\)/);
+    if (colourMatch) {
+        const hue = parseFloat(colourMatch[1]);
+        const saturation = parseFloat(colourMatch[3]);
+        let lightness = parseFloat(colourMatch[5]);
+
+        lightness = Math.min(100, lightness + addition);
+        const adjustedSaturation = Math.max(0, Math.min(saturation, 100));
+        colour = `hsl(${hue}deg ${adjustedSaturation}% ${lightness}%)`;
+    }
+    return colour;
+}
+
+export function variateColourHue(colour, variation) {
+    let hslColour = getHSLColour(colour);
+    const colourMatch = hslColour.match(/hsl\((\d+(\.\d+)?)deg (\d+(\.\d+)?)% (\d+(\.\d+)?)%\)/);
+    if (colourMatch) {
+        let hue = parseFloat(colourMatch[1]);
+        hue = (hue + variation) % 360;
+        hue = hue < 0 ? 360 + hue : hue;
+        colour = `hsl(${hue}deg ${colourMatch[3]}% ${colourMatch[5]}%)`;
     }
     return colour;
 }

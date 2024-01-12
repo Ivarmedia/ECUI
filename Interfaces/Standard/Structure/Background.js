@@ -27,8 +27,14 @@ export class Background {
         if(!Utils.isNullOrEmpty(url)) {
             this.img = document.createElement("img");
             this.img.src = url;
-            this.img.className = `${this.classes.opacity} ECUI-General-background`;
+            this.img.className = `${this.classes.backgroundOpacity} ECUI-General-background`;
             this.container.appendChild(this.img);
+        }
+    }
+
+    removeImg() {
+        if(this.img) {
+            this.img.remove();
         }
     }
 

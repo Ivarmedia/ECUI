@@ -9,28 +9,30 @@ export class StandardUI {
 
     constructor(container, theme, global) {
         this.ECUI = global;
-        this.ECUI.panels = [];
-        this.ECUI.components = [];
-        this.ECUI.theme = new Theme(theme, this.ECUI);
-        this.ECUI.layout = new Layout(container, this.ECUI);
+        this.ECUI.ECUI_Panels = [];
+        this.ECUI.ECUI_Components = [];
+        this.ECUI.ECUI_Areas = [];
+
+        this.ECUI.ECUI_Theme = new Theme(theme, this.ECUI);
+        this.ECUI.ECUI_Layout = new Layout(container, this.ECUI);
         this.panelManager = new PanelManager(this.ECUI);
     };
 
     buildTheme(theme) {
-        this.ECUI.theme = new Theme(theme, this.ECUI);
+        this.ECUI.ECUI_Theme = new Theme(theme, this.ECUI);
     }
 
     loadPanels(panels) {
         var panelsIds = [...new Set(panels.map(panel => panel.id))];
         this.panelManager.removeMatchingPanels(panelsIds);
-        var allPanels = this.ECUI.panels.concat(panels);
-        this.ECUI.layout.update(allPanels);
+        var allPanels = this.ECUI.ECUI_Panels.concat(panels);
+        this.ECUI.ECUI_Layout.update(allPanels);
         this.panelManager.loadPanels(panels);
     }
 
     removePanels(panelsIds) {
         this.panelManager.removeMatchingPanels(panelsIds);
-        this.ECUI.layout.update(this.ECUI.panels);
+        this.ECUI.ECUI_Layout.update(this.ECUI.panels);
     }
 
     loadComponents(components) {
@@ -38,11 +40,11 @@ export class StandardUI {
     }
 
     displayLoader() {
-        this.ECUI.layout.loader.display();
+        this.ECUI.ECUI_Layout.loader.display();
     }
 
     removeLoader() {
-        this.ECUI.layout.loader.remove();
+        this.ECUI.ECUI_Layout.loader.remove();
     }
 
 

@@ -1,119 +1,245 @@
 import * as Utils from "../../../Module/Utils.js";
+import * as Icons from "./Icons.js";
 
 export class Header {
 
     ECUI;
     id;
-    component;
+    area;
     element;
-    logoContainer;
-    logo;
-    secondaryLogoContainer;
-    secondaryLogo;
-    classes;
+    components;
+    customizedButtons;
+    blur;
 
-    constructor(global, headerInfo) {
+    constructor(global, info) {
         this.ECUI = global;
-        this.component = "header";
-        this.buildCss();
+        this.id = info.id;
+        this.area = info.area;
+        this.components = [];
 
-        if(headerInfo != null && !Utils.isNullOrEmpty(headerInfo.id)) {
-            this.id = headerInfo.id;
-        } else {
-            this.id = "header";
-        }
-
-        this.element = document.createElement("div");
-        this.element.className = `${this.ECUI.theme.classes.header} ECUI-Panel-Header-Component`;
-
-        var leftContainer = document.createElement("div");
-        leftContainer.className = "ECUI-Panel-Header-Left";
-
-        this.logoContainer = document.createElement("button");
-        this.logoContainer.className = "ECUI-Panel-Header-Logo-Container";
-
-        leftContainer.appendChild(this.logoContainer);
-        this.element.appendChild(leftContainer);
-
-        var centerContainer = document.createElement("div");
-        centerContainer.className = "ECUI-Panel-Header-Center";
-        this.element.appendChild(centerContainer);
-
-        var rightContainer = document.createElement("div");
-        rightContainer.className = "ECUI-Panel-Header-Right";
-
-        this.secondaryLogoContainer = document.createElement("a");
-        this.secondaryLogoContainer.className = "ECUI-Panel-Header-Secondary-Logo-Container";
-
-        rightContainer.appendChild(this.secondaryLogoContainer);
-        this.element.appendChild(rightContainer);
-
-        if(headerInfo != null && !Utils.isNullOrEmpty(headerInfo.logo)) {
-            this.loadLogo(headerInfo.logo);
-        } else {
-            this.loadLogo();
-        }
+        this.element = document.createElement("header");
+        this.element.className = `ECUI-Panel-Header`;
         
+        this.element.id = this.id;
+
+        var header = info.components[0];
+        header.element = document.createElement("div");
+        header.element.className = `${this.ECUI.ECUI_Theme.classes.header} ${this.ECUI.ECUI_Theme.classes.headerShadow} ECUI-Panel-Header-Component`; 
+        if(!Utils.isNullOrEmpty(this.ECUI.ECUI_Theme.colours.headerBorder)) {
+            header.element.className = `${this.ECUI.ECUI_Theme.classes.header} ${this.ECUI.ECUI_Theme.classes.headerBorder} ${this.ECUI.ECUI_Theme.classes.headerShadow} ECUI-Panel-Header-Component-With-Border`;
+        }
+        header.element.id = header.id;
+        this.components.push(header);
+
+        if(!Utils.isNullOrEmpty(header.background)) {
+            var background = document.createElement("img");
+            background.className = "ECUI-Panel-Header-Background";
+            background.src = header.background;
+            this.element.appendChild(background);
+        }
+
+        if(!Utils.isNullOrEmpty(header.blur)) {
+            this.blur = `backdrop-filter: blur(${header.blur}px);`
+        }
+
+        this.element.append(header.element);
+
+        this.customizedButtons = [];
+
+        if(!Utils.isNullOrEmpty(header.components)) {
+            header.components.forEach(unit => {
+                if(unit.componentId == "unit") {
+                    unit.element = document.createElement("div");
+                    unit.element.className = "ECUI-Panel-Header-Unit";
+                    unit.element.id = unit.id;
+                    header.element.append(unit.element);
+                    
+                    if(!Utils.isNullOrEmpty(unit.components)) {
+                        unit.components.forEach(component => {
+                            if(component.componentId == "logo") {
+                                this.buildLogo(component, unit.element);
+                            } else if (component.componentId == "input") {
+                                this.buildInput(component, unit.element);
+                            } else if (component.componentId == "button") {
+                                this.buildButton(component, unit.element);
+                            } else if (component.componentId == "inputWithButtons") {
+                                this.buildInputWithButtons(component, unit.element);
+                            } else if (component.componentId == "profile") {
+                                this.buildProfile(component, unit.element);
+                            }
+                        });
+                    }
+                }
+            });
+        }
+
+        this.buildCss();
     }
 
-    loadLogo(url) {
-        this.removeLogos();
-
-        if(!Utils.isNullOrEmpty(url)) {
-            this.logo = document.createElement("img");
-            this.logo.className = "ECUI-Panel-Header-Logo";
-            this.logo.src = url;
-            this.logoContainer.appendChild(this.logo);
-
-            this.secondaryLogoContainer.innerHTML = `
-                <svg class="ECUI-Panel-Header-Secondary-Logo" x="0px" y="0px" viewBox="0 0 800 73.6" xml:space="preserve">
-                    <path class="${this.ECUI.theme.classes.secondaryLogo}" d="M262.8,33.5c-12.2-1.2-20.7-1.2-20.7-6.7c0-5.5,10.3-7.3,18.3-6.7c9.7,0,18.3,2.4,24.9,7.3l7.9-9.7 c-7.9-6.1-19.5-9.1-32.2-9.1c-18.9,0-32.2,6.7-32.2,19.5s16.4,17,33.5,18.3c13.4,1.2,19.5,2.4,19.5,7.9c0,4.9-6.1,7.3-18.9,7.3 c-12.2,0-21.9-3-29.8-10.3l-7.3,9.7c9.1,7.9,21.9,12.2,37.1,12.2c21.3,0,32.9-8.5,32.9-20.1C295.7,39.5,281.7,35.3,262.8,33.5z"/>
-                    <path class="${this.ECUI.theme.classes.secondaryLogo}" d="M295.7,52.9L295.7,52.9L295.7,52.9z"/>
-                    <path class="${this.ECUI.theme.classes.secondaryLogo}" d="M396,10.3h-15.2l-32.2,60.8h14.6l6.7-12.8h36.5l6.7,12.8h15.2L396,10.3z M376,46.8l12.8-24.9l12.8,24.9 C401.5,46.8,376,46.8,376,46.8z"/>
-                    <polygon class="${this.ECUI.theme.classes.secondaryLogo}" points="370.5,10.3 299.3,10.3 299.3,22.5 325.5,22.5 325.5,71.2 339.5,71.2 339.5,22.5 364.4,22.5 		"/>
-                    <path class="${this.ECUI.theme.classes.secondaryLogo}" d="M176.4,10.3l-32.2,60.8h14.6l6.7-12.8H202l6.7,12.8h15.2l-32.2-60.8C191.6,10.3,176.4,10.3,176.4,10.3z M171,46.8l12.8-24.9l12.8,24.9C196.5,46.8,171,46.8,171,46.8z"/>
-                    <polygon class="${this.ECUI.theme.classes.secondaryLogo}" points="97.3,10.3 83.3,10.3 83.3,71.2 133.8,71.2 135.7,66.9 139.9,59 97.3,59 		"/>
-                    <polygon class="${this.ECUI.theme.classes.secondaryLogo}" points="23.7,46.2 63.9,46.2 63.9,34.7 9.7,34.7 9.7,71.2 72.4,71.2 72.4,59.6 23.7,59.6 		"/>
-                    <rect x="28" y="10.3" class="${this.ECUI.theme.classes.secondaryLogo}" width="43.8" height="11.6"/>
-                    <polygon class="${this.ECUI.theme.classes.primaryLogo}" points="9.7,0 0,0 0,10.3 9.7,10.3 9.7,21.9 21.9,21.9 21.9,10.3 9.7,10.3 		"/>
-                    <path class="${this.ECUI.theme.classes.primaryLogo}" d="M487.3,51.1c-4.3,6.7-11,9.7-20.1,9.7c-14.6,0-23.7-6.7-23.7-20.1s9.7-20.1,23.7-20.1c9.1,0,15.8,3,20.1,9.7 l12.8-6.1c-5.5-8.5-17-15.2-32.9-15.2c-23.7,0-38.3,12.2-38.3,32.2s14.6,32.2,37.7,32.2c15.8,0,27.4-6.7,33.5-15.8L487.3,51.1 L487.3,51.1z"/>
-                    <path class="${this.ECUI.theme.classes.primaryLogo}" d="M702.7,41.4c0,12.2-7.3,19.5-20.1,19.5c-13.4,0-20.1-7.3-20.1-19.5v-31h-14v32.2c0,18.3,12.2,30.4,34.1,30.4 s34.1-12.2,34.1-30.4V10.3h-14V41.4z"/>
-                    <path class="${this.ECUI.theme.classes.primaryLogo}" d="M762.3,10.3H730v60.8h32.2c23.1,0,37.7-11.6,37.7-30.4S785.4,10.3,762.3,10.3z M761.1,59h-17V21.9h17.6 c14.6,0,24.3,6.1,24.3,18.9C785.4,52.9,775.7,59,761.1,59z"/>
-                    <path class="${this.ECUI.theme.classes.primaryLogo}" d="M600.5,8.5c-23.7,0-38.9,12.2-38.9,32.2S576.7,73,600.5,73s38.9-12.2,38.9-32.2 C638.8,20.1,624.2,8.5,600.5,8.5z M600.5,60.8c-15.2,0-24.3-7.3-24.3-20.1s9.7-20.1,24.3-20.1c15.2,0,24.3,7.3,24.3,20.1 S615.1,60.8,600.5,60.8z"/>
-                    <path class="${this.ECUI.theme.classes.primaryLogo}" d="M556.7,59L556.7,59h-33.5V10.3h-14v60.8h57.2l0,0C561.5,67.5,558.5,63.9,556.7,59z"/>
-                </svg>
-            `;
-            this.secondaryLogo = this.secondaryLogoContainer.querySelector(".ECUI-Panel-Header-Secondary-Logo");
+    buildLogo(component, container) {
+        component.element = document.createElement("button");
+        component.element.className = `${this.ECUI.ECUI_Theme.classes.headerButtonsText} ${this.ECUI.ECUI_Theme.classes.headerPrimaryFont} ECUI-Panel-Header-Logo-Container`;
+        if(!Utils.isNullOrEmpty(component.function)) {
+            component.element.className = `${this.ECUI.ECUI_Theme.classes.headerButtonsText} ${this.ECUI.ECUI_Theme.classes.headerPrimaryFont} ECUI-Panel-Header-Logo-Container ECUI-Panel-Header-Cursor`;
+        }
+        component.element.id = component.id;
+        
+        if(!Utils.isNullOrEmpty(component.url) && component.url != "default") {
+            var logo = document.createElement("img");
+            logo.className = "ECUI-Panel-Header-Logo";
+            logo.src = component.url;
+            component.element.appendChild(logo);
         } else {
-            this.logoContainer.innerHTML = `
-                <svg class="ECUI-Panel-Header-Logo" x="0px" y="0px" viewBox="0 0 800 73.6" xml:space="preserve">
-                    <path class="${this.ECUI.theme.classes.secondaryLogo}" d="M262.8,33.5c-12.2-1.2-20.7-1.2-20.7-6.7c0-5.5,10.3-7.3,18.3-6.7c9.7,0,18.3,2.4,24.9,7.3l7.9-9.7 c-7.9-6.1-19.5-9.1-32.2-9.1c-18.9,0-32.2,6.7-32.2,19.5s16.4,17,33.5,18.3c13.4,1.2,19.5,2.4,19.5,7.9c0,4.9-6.1,7.3-18.9,7.3 c-12.2,0-21.9-3-29.8-10.3l-7.3,9.7c9.1,7.9,21.9,12.2,37.1,12.2c21.3,0,32.9-8.5,32.9-20.1C295.7,39.5,281.7,35.3,262.8,33.5z"/>
-                    <path class="${this.ECUI.theme.classes.secondaryLogo}" d="M295.7,52.9L295.7,52.9L295.7,52.9z"/>
-                    <path class="${this.ECUI.theme.classes.secondaryLogo}" d="M396,10.3h-15.2l-32.2,60.8h14.6l6.7-12.8h36.5l6.7,12.8h15.2L396,10.3z M376,46.8l12.8-24.9l12.8,24.9 C401.5,46.8,376,46.8,376,46.8z"/>
-                    <polygon class="${this.ECUI.theme.classes.secondaryLogo}" points="370.5,10.3 299.3,10.3 299.3,22.5 325.5,22.5 325.5,71.2 339.5,71.2 339.5,22.5 364.4,22.5 		"/>
-                    <path class="${this.ECUI.theme.classes.secondaryLogo}" d="M176.4,10.3l-32.2,60.8h14.6l6.7-12.8H202l6.7,12.8h15.2l-32.2-60.8C191.6,10.3,176.4,10.3,176.4,10.3z M171,46.8l12.8-24.9l12.8,24.9C196.5,46.8,171,46.8,171,46.8z"/>
-                    <polygon class="${this.ECUI.theme.classes.secondaryLogo}" points="97.3,10.3 83.3,10.3 83.3,71.2 133.8,71.2 135.7,66.9 139.9,59 97.3,59 		"/>
-                    <polygon class="${this.ECUI.theme.classes.secondaryLogo}" points="23.7,46.2 63.9,46.2 63.9,34.7 9.7,34.7 9.7,71.2 72.4,71.2 72.4,59.6 23.7,59.6 		"/>
-                    <rect x="28" y="10.3" class="${this.ECUI.theme.classes.secondaryLogo}" width="43.8" height="11.6"/>
-                    <polygon class="${this.ECUI.theme.classes.primaryLogo}" points="9.7,0 0,0 0,10.3 9.7,10.3 9.7,21.9 21.9,21.9 21.9,10.3 9.7,10.3 		"/>
-                    <path class="${this.ECUI.theme.classes.primaryLogo}" d="M487.3,51.1c-4.3,6.7-11,9.7-20.1,9.7c-14.6,0-23.7-6.7-23.7-20.1s9.7-20.1,23.7-20.1c9.1,0,15.8,3,20.1,9.7 l12.8-6.1c-5.5-8.5-17-15.2-32.9-15.2c-23.7,0-38.3,12.2-38.3,32.2s14.6,32.2,37.7,32.2c15.8,0,27.4-6.7,33.5-15.8L487.3,51.1 L487.3,51.1z"/>
-                    <path class="${this.ECUI.theme.classes.primaryLogo}" d="M702.7,41.4c0,12.2-7.3,19.5-20.1,19.5c-13.4,0-20.1-7.3-20.1-19.5v-31h-14v32.2c0,18.3,12.2,30.4,34.1,30.4 s34.1-12.2,34.1-30.4V10.3h-14V41.4z"/>
-                    <path class="${this.ECUI.theme.classes.primaryLogo}" d="M762.3,10.3H730v60.8h32.2c23.1,0,37.7-11.6,37.7-30.4S785.4,10.3,762.3,10.3z M761.1,59h-17V21.9h17.6 c14.6,0,24.3,6.1,24.3,18.9C785.4,52.9,775.7,59,761.1,59z"/>
-                    <path class="${this.ECUI.theme.classes.primaryLogo}" d="M600.5,8.5c-23.7,0-38.9,12.2-38.9,32.2S576.7,73,600.5,73s38.9-12.2,38.9-32.2 C638.8,20.1,624.2,8.5,600.5,8.5z M600.5,60.8c-15.2,0-24.3-7.3-24.3-20.1s9.7-20.1,24.3-20.1c15.2,0,24.3,7.3,24.3,20.1 S615.1,60.8,600.5,60.8z"/>
-                    <path class="${this.ECUI.theme.classes.primaryLogo}" d="M556.7,59L556.7,59h-33.5V10.3h-14v60.8h57.2l0,0C561.5,67.5,558.5,63.9,556.7,59z"/>
-                </svg>
-            `;
-            this.logo = this.logoContainer.querySelector(".ECUI-Panel-Header-Logo");
+            component.element.innerHTML = `<svg class="ECUI-Panel-Header-Logo" x="0px" y="0px" viewBox="0 0 400 400" xml:space="preserve"> <rect class="${this.ECUI.ECUI_Theme.classes.logoSecondary}" x="51.7" y="51.7" width="58.8" height="58.8"/> <rect class="${this.ECUI.ECUI_Theme.classes.logoSecondary}" width="51.7" height="51.7"/> <path class="${this.ECUI.ECUI_Theme.classes.logoPrimary}" d="M121.2,299.2v-67.4h201.6v-58.6H51.7v184.6H367v-58.6L121.2,299.2z"/> <rect class="${this.ECUI.ECUI_Theme.classes.logoPrimary}" x="142.8" y="51.7" width="219.8" height="58.6"/> </svg>`;
         }
+
+        if(!Utils.isNullOrEmpty(component.text)) {
+            component.element.innerHTML += component.text;
+        }
+
+        container.append(component.element); 
     }
 
-    removeLogos() {
-        if(this.logo) {
-            this.logo.remove();
+    buildInputWithButtons(component, container) {
+        component.element = document.createElement("div");
+        component.element.className = "ECUI-Panel-Header-Input-With-Button";
+        component.element.id = component.id;
+        
+        if(!Utils.isNullOrEmpty(component.components)) {
+            for(var i = 0; i < component.components.length; i++) {
+                var subComponent = component.components[i];
+                var subComponentPlace = "-Middle";
+                if(i == 0) {
+                    subComponentPlace = "-Start";
+                } else if (i == (component.components.length - 1)) {
+                    subComponentPlace = "-End";
+                }
+                if(subComponent.componentId == "input") {
+                    this.buildInput(subComponent, component.element, subComponentPlace);
+                } else if(subComponent.componentId == "button") {
+                    this.buildButton(subComponent, component.element, subComponentPlace);
+                }
+            }
+        };
+
+        container.append(component.element); 
+    }
+
+    buildInput(component, container, place = "") {
+        component.element = document.createElement("button");
+        component.element.className = "ECUI-Panel-Hoverable-Input-Container ECUI-Panel-Header-Search-Input-Container";
+        component.element.id = component.id;
+        
+        component.input = document.createElement("input");
+        
+        component.input.className = `${this.ECUI.ECUI_Theme.classes.headerPrimaryFont} ${this.ECUI.ECUI_Theme.classes.headerInputs} ${this.ECUI.ECUI_Theme.classes.headerInputsText} ${this.ECUI.ECUI_Theme.classes.headerInputsShadow} ${this.ECUI.ECUI_Theme.classes.headerInputsHover} ${this.ECUI.ECUI_Theme.classes.headerInputsTextHover} ${this.ECUI.ECUI_Theme.classes.headerInputsShadowHover} ECUI-Panel-Header-Search-Input${place}`;
+        if(!Utils.isNullOrEmpty(this.ECUI.ECUI_Theme.colours.headerInputsBorder)) {
+            component.input.className = `${this.ECUI.ECUI_Theme.classes.headerPrimaryFont} ${this.ECUI.ECUI_Theme.classes.headerInputs} ${this.ECUI.ECUI_Theme.classes.headerInputsText} ${this.ECUI.ECUI_Theme.classes.headerInputsBorder} ${this.ECUI.ECUI_Theme.classes.headerInputsShadow} ${this.ECUI.ECUI_Theme.classes.headerInputsHover} ${this.ECUI.ECUI_Theme.classes.headerInputsTextHover} ${this.ECUI.ECUI_Theme.classes.headerInputsBorderHover} ${this.ECUI.ECUI_Theme.classes.headerInputsShadowHover} ECUI-Panel-Header-Search-Input-With-Border${place}`;
         }
-        if(this.secondaryLogo) {
-            this.secondaryLogo.remove();
+
+        component.input.type = component.type;
+        component.input.placeholder = component.placeholder;
+        component.element.append(component.input);
+
+        Icons.printIcon(component.type, `${this.ECUI.ECUI_Theme.classes.headerInputsIcon} ECUI-Panel-Header-Search-Input-Icon`, component.element);
+        
+        container.append(component.element); 
+    }
+
+    buildButton(component, container, place = "") {
+        component.element = document.createElement("button");
+        component.element.id = component.id;
+
+        var padding = "ECUI-Panel-Header-Button-Padding";
+        if(!Utils.isNullOrEmpty(component.icon) && Utils.isNullOrEmpty(component.name)) {
+            padding = "ECUI-Panel-Header-Button-Icon-Padding";
         }
+        var uppercase = "";
+        if(component.uppercase == true) {
+            uppercase = "ECUI-Panel-Header-Button-Uppercase";
+        }
+
+        if(!Utils.isNullOrEmpty(component.colours)) {
+            this.customizedButtons.push(component);
+            component.element.className = `${this.ECUI.ECUI_Theme.classes.headerPrimaryFont} ECUI-Panel-Header-Button${place} ${padding} ${uppercase}`;
+            if(!Utils.isNullOrEmpty(component.colours.border)) {
+                component.element.className = `${this.ECUI.ECUI_Theme.classes.headerPrimaryFont} ECUI-Panel-Header-Button-With-Border${place} ${padding} ${uppercase}`;
+            }
+            if(!Utils.isNullOrEmpty(component.icon) && !Utils.isNullOrEmpty(component.name)) {
+                Icons.printIcon(component.icon, `ECUI-Panel-Header-Button-Icon`, component.element);
+                component.element.innerHTML += component.name;
+            } else if (!Utils.isNullOrEmpty(component.icon) && Utils.isNullOrEmpty(component.name)) {
+                if(component.colours.background == "transparent") {
+                    Icons.printIcon(component.icon, `ECUI-Panel-Header-Button-Icon-Only-No-Backrgound`, component.element);
+                } else {
+                    Icons.printIcon(component.icon, `ECUI-Panel-Header-Button-Icon-Only`, component.element);
+                }
+            } else if(Utils.isNullOrEmpty(component.icon) && !Utils.isNullOrEmpty(component.name)) {
+                component.element.innerHTML += component.name;
+            }
+        } else {
+            component.element.className = `${this.ECUI.ECUI_Theme.classes.headerPrimaryFont} ${this.ECUI.ECUI_Theme.classes.headerButtons} ${this.ECUI.ECUI_Theme.classes.headerButtonsText} ${this.ECUI.ECUI_Theme.classes.headerButtonsShadow} ${this.ECUI.ECUI_Theme.classes.headerButtonsHover} ${this.ECUI.ECUI_Theme.classes.headerButtonsTextHover} ${this.ECUI.ECUI_Theme.classes.headerButtonsShadowHover} ECUI-Panel-Header-Button${place} ${padding} ${uppercase}`;
+            if(!Utils.isNullOrEmpty(this.ECUI.ECUI_Theme.colours.headerButtonsBorder)) {
+                component.element.className = `${this.ECUI.ECUI_Theme.classes.headerPrimaryFont} ${this.ECUI.ECUI_Theme.classes.headerButtons} ${this.ECUI.ECUI_Theme.classes.headerButtonsText} ${this.ECUI.ECUI_Theme.classes.headerButtonsBorder} ${this.ECUI.ECUI_Theme.classes.headerButtonsShadow} ${this.ECUI.ECUI_Theme.classes.headerButtonsHover} ${this.ECUI.ECUI_Theme.classes.headerButtonsTextHover} ${this.ECUI.ECUI_Theme.classes.headerButtonsBorderHover} ${this.ECUI.ECUI_Theme.classes.headerButtonsShadowHover} ECUI-Panel-Header-Button-With-Border${place} ${padding} ${uppercase}`;
+            }
+            if(!Utils.isNullOrEmpty(component.icon) && !Utils.isNullOrEmpty(component.name)) {
+                Icons.printIcon(component.icon, `${this.ECUI.ECUI_Theme.classes.headerButtonsIcon} ${this.ECUI.ECUI_Theme.classes.headerButtonsIconHover} ECUI-Panel-Header-Button-Icon`, component.element);
+                component.element.innerHTML += component.name;
+            } else if (!Utils.isNullOrEmpty(component.icon) && Utils.isNullOrEmpty(component.name)) {
+                if(this.ECUI.ECUI_Theme.classes.headerButtons == "transparent") {
+                    Icons.printIcon(component.icon, `${this.ECUI.ECUI_Theme.classes.headerButtonsIcon} ${this.ECUI.ECUI_Theme.classes.headerButtonsIconHover} ECUI-Panel-Header-Button-Icon-Only-No-Backrgound`, component.element);
+                } else {
+                    Icons.printIcon(component.icon, `${this.ECUI.ECUI_Theme.classes.headerButtonsIcon} ${this.ECUI.ECUI_Theme.classes.headerButtonsIconHover} ECUI-Panel-Header-Button-Icon-Only`, component.element);
+                }
+            } else if(Utils.isNullOrEmpty(component.icon) && !Utils.isNullOrEmpty(component.name)) {
+                component.element.innerHTML += component.name;
+            }
+
+        }
+        container.append(component.element); 
+    }
+
+    buildProfile(component, container) {
+        component.element = document.createElement("button");
+        component.element.className = "ECUI-Panel-Header-Profile-Container";
+        component.element.id = component.id;
+
+        if(!Utils.isNullOrEmpty(component.topLine) || !Utils.isNullOrEmpty(component.bottomLine)) {
+            var info = document.createElement("div");
+            info.className = "ECUI-Panel-Header-Profile-Info";
+            component.element.append(info);
+
+            if(!Utils.isNullOrEmpty(component.topLine)) {
+                var topLine = document.createElement("div");
+                topLine.className = `${this.ECUI.ECUI_Theme.classes.headerPrimaryFont} ${this.ECUI.ECUI_Theme.classes.headerProfileTopLine} ${this.ECUI.ECUI_Theme.classes.headerProfileTopLineHover} ECUI-Panel-Header-Profile-Info-Top-Line`;
+                topLine.innerHTML = component.topLine;
+                info.append(topLine);
+            }
+
+            if(!Utils.isNullOrEmpty(component.bottomLine)) {
+                var bottomLine = document.createElement("div");
+                bottomLine.className = `${this.ECUI.ECUI_Theme.classes.headerSecondaryFont} ${this.ECUI.ECUI_Theme.classes.headerProfileBottomLine} ${this.ECUI.ECUI_Theme.classes.headerProfileBottomLineHover} ECUI-Panel-Header-Profile-Info-Bottom-Line`;
+                bottomLine.innerHTML = component.bottomLine;
+                info.append(bottomLine);
+            }
+        }
+
+        var iconContainer = document.createElement("div");
+        iconContainer.className = `${this.ECUI.ECUI_Theme.classes.headerProfile} ${this.ECUI.ECUI_Theme.classes.headerProfileShadow} ${this.ECUI.ECUI_Theme.classes.headerProfileHover} ${this.ECUI.ECUI_Theme.classes.headerProfileShadowHover} ECUI-Panel-Header-Profile-Icon-Container`;
+        if(!Utils.isNullOrEmpty(this.ECUI.ECUI_Theme.colours.headerProfileBorder)) {
+            iconContainer.className = `${this.ECUI.ECUI_Theme.classes.headerProfile} ${this.ECUI.ECUI_Theme.classes.headerProfileBorder} ${this.ECUI.ECUI_Theme.classes.headerProfileShadow} ${this.ECUI.ECUI_Theme.classes.headerProfileHover} ${this.ECUI.ECUI_Theme.classes.headerProfileBorderHover} ${this.ECUI.ECUI_Theme.classes.headerProfileShadowHover} ECUI-Panel-Header-Profile-Icon-Container-With-Border`;
+        }
+        component.element.append(iconContainer);
+        
+        if(!Utils.isNullOrEmpty(component.url)) {
+            var profilePicture = document.createElement("img");
+            profilePicture.className = "ECUI-Panel-Header-Profile-Picture";
+            profilePicture.src = component.url;
+            iconContainer.element.appendChild(profilePicture);
+        } else {
+            iconContainer.innerHTML += `<svg class="${this.ECUI.ECUI_Theme.classes.headerProfileIcon} ${this.ECUI.ECUI_Theme.classes.headerProfileIconHover} ECUI-Panel-Header-Profile-Icon" width="16" height="16" viewBox="0 0 16 16"> <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/> </svg>`;
+        }
+        container.append(component.element); 
     }
 
     buildCss() {
@@ -123,12 +249,75 @@ export class Header {
         styleSheet.setAttribute('type', 'text/css');
         styleSheet.id = "ECUI-Header-Style";
 
+        if(!Utils.isNullOrEmpty(this.components) && !Utils.isNullOrEmpty(this.components[0].components) && this.components[0].components.length > 2) {
+            var lengths = [];
+        }
+
         var cssRules = `
-            .ECUI-Panel-Header-Component { height: 25px; width: 100%; padding: 0 16px; display: flex; flex-direction: row; justify-content: space-between; align-items: center; }
-            .ECUI-Panel-Header-Left { height: 11px; width: 200px; line-height: 0px; }
-            .ECUI-Panel-Header-Logo-Container { background-color: transparent; height: 11px; border: none; outline: none; margin: 0px; padding: 0px; cursor: pointer; line-height: 0px; }
-            .ECUI-Panel-Header-Logo { height: 11px; object-fit: contain; object-position: left; }
-        `;   
+            .ECUI-Panel-Header { position: relative; height: 56px; width: 100%; }
+            
+            .ECUI-Panel-Header-Component { position: relative; height: 56px; width: 100%; padding: 0 16px; display: flex; flex-direction: row; justify-content: space-between; align-items: center; gap: 30px; ${this.blur} }
+            .ECUI-Panel-Header-Component-With-Border { position: relative; height: 56px; width: 100%; border-bottom-width: 1px; border-bottom-style: solid; padding: 0 16px; display: flex; flex-direction: row; justify-content: space-between; align-items: center; gap: 30px; ${this.blur} }
+            .ECUI-Panel-Header-Background { width: 100%; height: 56px; position: absolute; left: 0%; top: 0%; object-fit: cover; }
+
+            .ECUI-Panel-Header-Unit { display: flex; flex-direction: row; align-items: center; gap: 20px; }
+            .ECUI-Panel-Header-Logo-Container { outline: 0; background-color: transparent; margin: 0px; padding: 0px; border: none; line-height: 0px; display: flex; flex-direction: row; align-items: center; gap: 15px; font-size: 1.2em; }
+            .ECUI-Panel-Header-Logo { height: 34px; max-width: 200px; min-width: 40px; object-fit: contain; object-position: center; margin-top: 1px; }
+            .ECUI-Panel-Header-Cursor { cursor: pointer }
+
+            .ECUI-Panel-Header-Input-With-Button { display: flex; flex-direction: row; }
+            
+            .ECUI-Panel-Header-Button { height: 38px; outline: 0; display: flex; flex-direction: row; align-items: center; margin: 0px; border-radius: 4px; border: none; gap: 10px; cursor: pointer; white-space: nowrap; font-size: 1em; }
+            .ECUI-Panel-Header-Button-Start { height: 38px; outline: 0; display: flex; flex-direction: row; align-items: center; margin: 0px; border-top-left-radius: 4px; border-bottom-left-radius: 4px; border: none; gap: 10px; cursor: pointer; white-space: nowrap; font-size: 1em; }
+            .ECUI-Panel-Header-Button-Middle { height: 38px; outline: 0; display: flex; flex-direction: row; align-items: center; margin: 0px; border: none; gap: 10px; cursor: pointer; white-space: nowrap; font-size: 1em; }
+            .ECUI-Panel-Header-Button-End { height: 38px; outline: 0; display: flex; flex-direction: row; align-items: center; margin: 0px; border-top-right-radius: 4px; border-bottom-right-radius: 4px; border: none; gap: 10px; cursor: pointer; white-space: nowrap; font-size: 1em; }
+            .ECUI-Panel-Header-Button-With-Border { height: 38px; outline: 0; display: flex; flex-direction: row; align-items: center; margin: 0px; border-radius: 4px; border-style: solid; border-width: 1px; gap: 10px; cursor: pointer; white-space: nowrap; font-size: 1em; }
+            .ECUI-Panel-Header-Button-With-Border-Start { height: 38px; outline: 0; display: flex; flex-direction: row; align-items: center; margin: 0px; border-top-left-radius: 4px; border-bottom-left-radius: 4px; border-style: solid; border-width: 1px; gap: 10px; cursor: pointer; white-space: nowrap; font-size: 1em; }
+            .ECUI-Panel-Header-Button-With-Border-Middle { height: 38px; outline: 0; display: flex; flex-direction: row; align-items: center; margin: 0px; border-style: solid; border-width: 1px; gap: 10px; cursor: pointer; white-space: nowrap; font-size: 1em; }
+            .ECUI-Panel-Header-Button-With-Border-End { height: 38px; outline: 0; display: flex; flex-direction: row; align-items: center; margin: 0px; border-top-right-radius: 4px; border-bottom-right-radius: 4px; border-style: solid; border-width: 1px; gap: 10px; cursor: pointer; white-space: nowrap; font-size: 1em; }
+            
+            .ECUI-Panel-Header-Button-Icon { height: 14px; width: 14px; min-width: 14px; }
+            .ECUI-Panel-Header-Button-Icon-Only { height: 18px; width: 18px; min-width: 18px; }
+            .ECUI-Panel-Header-Button-Icon-Only-No-Backrgound { height: 22px; width: 24px; min-width: 22px; }
+            .ECUI-Panel-Header-Button-Padding { padding: 0 15px; }
+            .ECUI-Panel-Header-Button-Icon-Padding { padding: 0 10px; }
+            .ECUI-Panel-Header-Button-Uppercase { text-transform: uppercase; }
+
+            .ECUI-Panel-Header-Search-Input-Container { width: 60vw; max-width: 500px; position: relative; margin: 0px; padding: 0px; border: none; outline: 0; background-color: transparent; }
+            .ECUI-Panel-Header-Search-Input { height: 38px; min-width: 260px; width: 100%; outline: 0; padding: 0 15px; margin: 0px; border-radius: 4px; border: none; font-size: 1em; }
+            .ECUI-Panel-Header-Search-Input-Start { height: 38px; min-width: 260px; width: 100%; outline: 0; padding: 0 15px; margin: 0px; border: none; border-top-left-radius: 4px; border-bottom-left-radius: 4px; font-size: 1em; }
+            .ECUI-Panel-Header-Search-Input-Middle { height: 38px; min-width: 260px; width: 100%; outline: 0; padding: 0 15px; margin: 0px; border: none; font-size: 1em; }
+            .ECUI-Panel-Header-Search-Input-End { height: 38px; min-width: 260px; width: 100%; outline: 0; padding: 0 15px; margin: 0px; border: none; border-top-right-radius: 4px; border-bottom-right-radius: 4px; font-size: 1em; }
+            .ECUI-Panel-Header-Search-Input-With-Border { height: 38px; min-width: 260px; width: 100%; outline: 0; padding: 0 15px; margin: 0px; border-radius: 4px; border-style: solid; border-width: 1px; font-size: 1em; }
+            .ECUI-Panel-Header-Search-Input-With-Border-Start { height: 38px; min-width: 260px; width: 100%; outline: 0; padding: 0 15px; margin: 0px; border-style: solid; border-width: 1px; border-top-left-radius: 4px; border-bottom-left-radius: 4px; border-right: none; font-size: 1em; }
+            .ECUI-Panel-Header-Search-Input-With-Border-Middle { height: 38px; min-width: 260px; width: 100%; outline: 0; padding: 0 15px; margin: 0px; border-style: solid; border-width: 1px; border-left: none; border-right: none; font-size: 1em; }
+            .ECUI-Panel-Header-Search-Input-With-Border-End { height: 38px; min-width: 260px; width: 100%; outline: 0; padding: 0 15px; margin: 0px; border-style: solid; border-width: 1px; border-top-right-radius: 4px; border-bottom-right-radius: 4px; border-left: none; font-size: 1em;}
+            
+            .ECUI-Panel-Header-Search-Input::-webkit-search-cancel-button, .ECUI-Panel-Header-Search-Input-Start::-webkit-search-cancel-button, .ECUI-Panel-Header-Search-Input-Middle::-webkit-search-cancel-button, ECUI-Panel-Header-Search-Input-End::-webkit-search-cancel-button, .ECUI-Panel-Header-Search-Input-With-Border::-webkit-search-cancel-button, .ECUI-Panel-Header-Search-Input-With-Border-Start::-webkit-search-cancel-button, .ECUI-Panel-Header-Search-Input-With-Border-Middle::-webkit-search-cancel-button, .ECUI-Panel-Header-Search-Input-With-Border-End::-webkit-search-cancel-button { -webkit-appearance: none; }
+            .ECUI-Panel-Header-Search-Input::-moz-search-cancel-button, .ECUI-Panel-Header-Search-Input-Start::-moz-search-cancel-button, .ECUI-Panel-Header-Search-Input-Middle::-moz-search-cancel-button, ECUI-Panel-Header-Search-Input-End::-moz-search-cancel-button, .ECUI-Panel-Header-Search-Input-With-Border::-moz-search-cancel-button, .ECUI-Panel-Header-Search-Input-With-Border-Start::-moz-search-cancel-button, .ECUI-Panel-Header-Search-Input-With-Border-Middle::-moz-search-cancel-button, .ECUI-Panel-Header-Search-Input-With-Border-End::-moz-search-cancel-button
+            .ECUI-Panel-Header-Search-Input::-ms-clear, .ECUI-Panel-Header-Search-Input-Start::-ms-clear, .ECUI-Panel-Header-Search-Input-Middle::-ms-clear, ECUI-Panel-Header-Search-Input-End::-ms-clear, .ECUI-Panel-Header-Search-Input-With-Border::-ms-clear, .ECUI-Panel-Header-Search-Input-With-Border-Start::-ms-clear, .ECUI-Panel-Header-Search-Input-With-Border-Middle::-ms-clear, .ECUI-Panel-Header-Search-Input-With-Border-End::-ms-clear { -webkit-appearance: none; }
+            .ECUI-Panel-Header-Search-Input::-ms-reveal, .ECUI-Panel-Header-Search-Input-Start::-ms-reveal, .ECUI-Panel-Header-Search-Input-Middle::-ms-reveal, ECUI-Panel-Header-Search-Input-End::-ms-reveal, .ECUI-Panel-Header-Search-Input-With-Border::-ms-reveal, .ECUI-Panel-Header-Search-Input-With-Border-Start::-ms-reveal, .ECUI-Panel-Header-Search-Input-With-Border-Middle::-ms-reveal, .ECUI-Panel-Header-Search-Input-With-Border-End::-ms-reveal { -webkit-appearance: none; }
+            
+            .ECUI-Panel-Header-Search-Input-Icon { position: absolute; right: 12px; width: 18px; height: 18px; top: 50%; transform: translateY(-50%); pointer-events: none; }
+            .ECUI-Panel-Header-Profile-Container { cursor: pointer; outline: 0; background-color: transparent; margin: 0px; padding: 0px; border: none; display: flex; flex-direction: row; align-items: center; gap: 12px; }
+            .ECUI-Panel-Header-Profile-Info { display: flex; flex-direction: column; align-items: flex-end; }
+            .ECUI-Panel-Header-Profile-Info-Top-Line { font-size: 14px; max-width: 140px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
+            .ECUI-Panel-Header-Profile-Info-Bottom-Line { font-size: 11px; max-width: 140px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
+            .ECUI-Panel-Header-Profile-Icon-Container { position: relative; height: 38px; width: 38px; border-radius: 50%; border: none; overflow: hidden; }
+            .ECUI-Panel-Header-Profile-Icon-Container-With-Border { position: relative; height: 38px; width: 38px; border-radius: 50%; border-style: solid; border-width: 1px; overflow: hidden; }
+            .ECUI-Panel-Header-Profile-Icon { height: 22px; width: 22px; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -55%);}
+        `; 
+        
+        if(!Utils.isNullOrEmpty(this.customizedButtons)) {
+            this.customizedButtons.forEach(button => {
+                cssRules += `
+                    #${button.id} { background-color: ${button.colours.background}; color: ${button.colours.text}; border-color: ${button.colours.border}; box-shadow: ${button.colours.shadow} }
+                    #${button.id} svg { fill: ${button.colours.icon}; }
+                    #${button.id}:hover, #${button.id}:focus, #${button.id}:active { background-color: ${button.colours.backgroundHover}; color: ${button.colours.textHover}; border-color: ${button.colours.borderHover}; box-shadow: ${button.colours.shadowHover} }
+                    #${button.id}:hover svg, #${button.id}:focus svg, #${button.id}:active svg { fill: ${button.colours.iconHover}; }
+                `;
+            });
+        }
         
         if (styleSheet.styleSheet) {
             styleSheet.styleSheet.cssText = cssRules;

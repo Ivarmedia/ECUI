@@ -1,6 +1,5 @@
 import { Header } from "../Components/Header.js";
-import { Nav } from "../Components/Nav.js";
-
+import { SideNav } from "../Components/SideNav.js";
 
 export class PanelManager {
 
@@ -12,78 +11,39 @@ export class PanelManager {
 
     removeMatchingPanels(panelsIds) {
         panelsIds.forEach(panelId => {
-            if(this.ECUI.panels.some(p => p.id == panelId)) {
-                var panelToRemove = this.ECUI.panels.find(p => p.id == panelId);
+            if(this.ECUI.ECUI_Panels.some(p => p.id == panelId)) {
+                var panelToRemove = this.ECUI.ECUI_Panels.find(p => p.id == panelId);
                 panelToRemove.element.remove();
-                this.ECUI.panels = this.ECUI.panels.filter(p => p.id !== panelId);
+                this.ECUI.ECUI_Panels = this.ECUI.ECUI_Panels.filter(p => p.id !== panelId);
             }
         });
     }
 
     loadPanels(panels) {
         panels.forEach(panel => {
-            if(panel.area == "header") {
-                this.buildHeader(panel);
-            } else if (panel.area == "nav") {
-                this.buildNavigationBar(panel);
-            } else {
-                this.buildPanel(panel);
+            if(panel.components != null) {
+                if(panel.area.includes("center")) {
+
+                } else {
+                    this.buildPanel(panel);
+                }
             }
         });
     }
 
-    buildHeader(panel) {
-        panel.element = document.createElement("div");
-        panel.element.className = `ECUI-Panel-Header`;
-
-        if(panel.components != null && panel.components.find(c => c.component == "header")) {
-            var headerInfo = panel.components.find(c => c.component == "header");
-            var headerComponent = new Header(this.ECUI, headerInfo);
-            var index = panel.components.findIndex(c => c.component == "header");
-            panel.components.splice(index, 1);
-            panel.components.push(headerComponent);
-            this.ECUI.components.push(headerComponent);
-            panel.element.appendChild(headerComponent.element);
-        } else {
-            panel.components = [];
-            var headerComponent = new Header(this.ECUI);
-            panel.components.push(headerComponent);
-            this.ECUI.components.push(headerComponent);
-            panel.element.appendChild(headerComponent.element);
-
+    buildPanel(panelInfo) {
+        var panel;
+        if(panelInfo.area == "header" && panelInfo.components.find(c => c.componentId == "header")) {
+            panel = new Header(this.ECUI, panelInfo);
+        } else if (panelInfo.area == "sideNav" && panelInfo.components.find(c => c.componentId == "sideNav")) {
+            panel = new SideNav(this.ECUI, panelInfo);
         }
-
-        this.ECUI.panels.push(panel);
-        var container = this.ECUI.areas.find(a => a.id == "header");
-        container.area.appendChild(panel.element);
-
-    }
-
-    buildNavigationBar(panel) {
-        panel.element = document.createElement("div");
-        panel.element.className = `ECUI-Panel-Navigation-Bar`;
-
-        if(panel.components != null && panel.components.find(c => c.component == "nav")) {
-            var navInfo = panel.components.find(c => c.component == "nav");
-            var navComponent = new Nav(this.ECUI, navInfo);
-            var index = panel.components.findIndex(c => c.component == "nav");
-            panel.components.splice(index, 1);
-            panel.components.push(navComponent);
-            this.ECUI.components.push(navComponent);
-            panel.element.appendChild(navComponent.element);
-        }
-
-        this.ECUI.panels.push(panel);
-        var container = this.ECUI.areas.find(a => a.id == "nav");
+        this.ECUI.ECUI_Panels.push(panel);
+        var container = this.ECUI.ECUI_Areas.find(a => a.id == panelInfo.area);
         container.area.appendChild(panel.element);
     }
 
-    buildActionBarPanel(panel) {
 
-    }
 
-    buildPanel(panel) {
-        
-    }
 
 }
