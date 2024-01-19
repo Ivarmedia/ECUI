@@ -55,9 +55,9 @@ export class Theme {
         this.setHeaderSecondaryFont(theme.fonts.headerSecondaryFont);
         this.setHeaderSecondaryFontWeight(theme.fonts.headerSecondaryFontWeight);
         this.setHeaderSecondaryFontSeparation(theme.fonts.headerSecondaryFontSeparation);
-        this.setSideNavFont(theme.fonts.headerPrimaryFont);
-        this.setSideNavFontWeight(theme.fonts.headerPrimaryFontWeight);
-        this.setSideNavFontSeparation(theme.fonts.headerPrimaryFontSeparation);
+        this.setSideNavFont(theme.fonts.sideNavFont);
+        this.setSideNavFontWeight(theme.fonts.sideNavFontWeight);
+        this.setSideNavFontSeparation(theme.fonts.sideNavFontSeparation);
         this.setHeaderColour(theme.colours.header);
         this.setHeaderBorderColour(theme.colours.headerBorder);
         this.setHeaderShadowColour(theme.colours.headerShadow);
@@ -106,7 +106,18 @@ export class Theme {
         this.setSideNavButtonsIconsBorder(theme.colours.sideNavButtonsIconsBorder);
         this.setSideNavButtonsText(theme.colours.sideNavButtonsText);
         this.setSideNavButtonsTextHover(theme.colours.sideNavButtonsTextHover);
-        
+        this.setSubSideNavColour(theme.colours.subSideNav);
+        this.setSubSideNavBorderColour(theme.colours.subSideNavBorder);
+        this.setSubSideNavShadowColour(theme.colours.subSideNavShadow);
+        this.setSubSideNavContrastColour(theme.colours.subSideNavContrast);
+        this.setSubSideNavContrastShadowColour(theme.colours.subSideNavContrastShadow);
+        this.setSubSideNavScrollBarColour(theme.colours.subSideNavScrollBar);
+        this.setSubSideNavText(theme.colours.subSideNavText);
+        this.setSubSideNavButtonsColour(theme.colours.subSideNavButtons);
+        this.setSubSideNavButtonsBorderColour(theme.colours.subSideNavButtonsBorder);
+        this.setSubSideNavButtonsShadowColour(theme.colours.subSideNavButtonsShadow);
+        this.setSubSideNavButtonsHoverColour(theme.colours.subSideNavButtonsHover);
+        this.setSubSideNavButtonsText(theme.colours.subSideNavButtonsText);
     };
 
     createStyleSheet(cssRules) {
@@ -542,10 +553,77 @@ export class Theme {
         this.refreshStyleSheet(); 
     }
 
+    setSubSideNavColour(colour) {
+        this.classes.subSideNav = "ECUI-Brand-Style-Sub-Side-Nav";
+        this.colours.subSideNav = colour;
+        this.refreshStyleSheet();      
+    }
 
+    setSubSideNavBorderColour(colour) {
+        this.classes.subSideNavBorder = "ECUI-Brand-Style-Sub-Side-Nav-Border";
+        this.colours.subSideNavBorder = colour;
+        this.refreshStyleSheet();      
+    }
 
+    setSubSideNavShadowColour(colour) {
+        this.classes.subSideNavShadow = "ECUI-Brand-Style-Sub-Side-Nav-Shadow";
+        this.colours.subSideNavShadow = colour;
+        this.refreshStyleSheet();      
+    }
 
+    setSubSideNavContrastColour(colour) {
+        this.classes.subSideNavContrast = "ECUI-Brand-Style-Sub-Side-Nav-Contrast";
+        this.colours.subSideNavContrast = colour;
+        this.refreshStyleSheet();      
+    }
 
+    setSubSideNavContrastShadowColour(colour) {
+        this.classes.subSideNavContrastShadow = "ECUI-Brand-Style-Sub-Side-Nav-Contrast-Shadow";
+        this.colours.subSideNavContrastShadow = colour;
+        this.refreshStyleSheet();      
+    }
+
+    setSubSideNavScrollBarColour(colour) {
+        this.classes.subSideNavScrollBar = "ECUI-Brand-Style-SUb-Side-Nav-Scroll-Bar";
+        this.colours.subSideNavScrollBar = colour;
+        this.refreshStyleSheet(); 
+    }
+
+    setSubSideNavText(colour) {
+        this.classes.subSideNavText = "ECUI-Brand-Style-Sub-Side-Nav-Text";
+        this.colours.subSideNavText = colour;
+        this.refreshStyleSheet(); 
+    }
+
+    setSubSideNavButtonsColour(colour) {
+        this.classes.subSideNavButtons = "ECUI-Brand-Style-Sub-Side-Nav-Button";
+        this.colours.subSideNavButtons = colour;
+        this.refreshStyleSheet();
+    }
+
+    setSubSideNavButtonsBorderColour(colour) {
+        this.classes.subSideNavButtonsBorder = "ECUI-Brand-Style-Sub-Side-Nav-Button-Border";
+        this.colours.subSideNavButtonsBorder = colour;
+        this.refreshStyleSheet();
+    }
+
+    setSubSideNavButtonsShadowColour(colour) {
+        this.classes.subSideNavButtonsShadow = "ECUI-Brand-Style-Sub-Side-Nav-Button-Shadow";
+        this.colours.subSideNavButtonsShadow = colour;
+        this.refreshStyleSheet();
+    }
+
+    setSubSideNavButtonsHoverColour(colour) {
+        this.classes.subSideNavButtonsHover = "ECUI-Brand-Style-Sub-Side-Nav-Button-Hover";
+        this.colours.subSideNavButtonsHover = colour;
+        this.refreshStyleSheet();
+    }
+
+    setSubSideNavButtonsText(colour) {
+        this.classes.subSideNavButtonsText = "ECUI-Brand-Style-Sub-Side-Nav-Button-Text";
+        this.colours.subSideNavButtonsText = colour;
+        this.refreshStyleSheet(); 
+    }
 
 
 

@@ -1,6 +1,8 @@
 export function getTeamsTheme() {
     var themeInfo = { 
         style: "Standard", 
+        backgroundImg: "./Example/Images/Bright-Background.jpg", 
+        backgroundOpacity: 0.2,
         colours: { 
             background: '#f5f5f5',
             header: '#444791',
@@ -42,7 +44,45 @@ export function getTeamsTheme() {
             headerProfileShadowHover: '',
             sideNav: '#f5f5f5',
             sideNavBorder: '#d9d9e2',
-            sideNavShadow: 'inset 0 1px 10px #00000033'
+            sideNavShadow: 'inset 0 1px 10px #00000033',
+            sideNavScrollBar: "#adadad",
+            sideNavButtonsHover: "#eaeff4",
+            sideNavButtonsBorderHover: "#d7d7d7",
+            sideNavButtonsPrimaryIcons: "#4285f4",
+            sideNavButtonsSecondaryIcons: "#EFEBF1",
+            sideNavButtonsIconsBorder: "",
+            sideNavButtonsText: "#26282c",
+            sideNavButtonsTextHover: "red",
+            subSideNav: '#f5f5f5',
+            subSideNavBorder: '#d9d9e2',
+            subSideNavShadow: '0 1px 10px #00000033',
+            subSideNavContrast: "#eaeff4",
+            subSideNavContrastShadow: "inset 0px 0px 5px #81818140",
+            subSideNavScrollBar: "#cecfd3",
+            subSideNavText: "#26282c",
+            subSideNavButtons: "#f8f8f8",
+            subSideNavButtonsBorder: "#d7d7d7",
+            subSideNavButtonsShadow: "1px 0px 5px #97979763",
+            subSideNavButtonsHover: "#eaeff4",
+            subSideNavButtonsText: "#26282c",
+        },
+        fonts: {
+            fontSize: "13px",
+            primaryFont: "sans-serif",
+            primaryFontWeight: "normal",
+            primaryFontSeparation: "normal",
+            secondaryFont: "sans-serif",
+            secondaryFontWeight: "normal",
+            secondaryFontSeparation: "normal",
+            headerPrimaryFont: "sans-serif",
+            headerPrimaryFontWeight: "normal",
+            headerPrimaryFontSeparation: "normal",
+            headerSecondaryFont: "sans-serif",
+            headerSecondaryFontWeight: "normal",
+            headerSecondaryFontSeparation: "normal",
+            sideNavFont: "sans-serif",
+            sideNavFontWeight: "normal",
+            sideNavFontSeparation: "normal"  
         }
     }
     return themeInfo;

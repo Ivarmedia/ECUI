@@ -1,5 +1,6 @@
 import * as Utils from "../../../Module/Utils.js";
 import * as Icons from "./Icons.js";
+import { SubSideNav } from "./SubSideNav.js";
 
 export class SideNav {
 
@@ -54,6 +55,7 @@ export class SideNav {
                     sideNav.element.append(unit.element);
                     var unitDecoration = document.createElement("div");
                     unitDecoration.className = "ECUI-Panel-Side-Nav-Unit-Decoration";
+
                     unit.element.append(unitDecoration);
                     if(!Utils.isNullOrEmpty(unit.components)) {
                         var colours = {
@@ -61,19 +63,18 @@ export class SideNav {
                             contrast: this.ECUI.ECUI_Theme.colours.sideNavButtonsSecondaryIcons,
                             border: this.ECUI.ECUI_Theme.colours.sideNavButtonsIconsBorder
                         };
-                        var hueVariation;
+                        var hueVariation = 0;
                         for(var i = 0; i < unit.components.length; i++) {
                             var component = unit.components[i];
-                            if(!Utils.isNullOrEmpty(unit.options) && unit.options.progressive && !Utils.isNullOrEmpty(unit.options.hueVariation)) {
+                            if (!Utils.isNullOrEmpty(component.colours)) {
+                                this.buildButton(component, unit.element, component.colours);
+                            } else if (!Utils.isNullOrEmpty(unit.options) && unit.options.progressive && !Utils.isNullOrEmpty(unit.options.hueVariation)) {
                                 var proggressiveColours = {
-                                    primary: Utils.variateColourHue(colours.primary, unit.options.hueVariation),
-                                    contrast: Utils.variateColourHue(colours.contrast, unit.options.hueVariation),
+                                    primary: Utils.variateColourHue(colours.primary, hueVariation),
+                                    contrast: Utils.variateColourHue(colours.contrast, hueVariation),
                                     border: colours.border
                                 }
-                                if(!hueVariation) {
-                                    hueVariation = unit.options.hueVariation
-                                }
-                                unit.options.hueVariation = unit.options.hueVariation + hueVariation;
+                                hueVariation = hueVariation + unit.options.hueVariation ;
                                 this.buildButton(component, unit.element, proggressiveColours);
                             } else if (!Utils.isNullOrEmpty(unit.options) && unit.options.alternate && !Utils.isNullOrEmpty(unit.options.hueVariation)) {
                                 var alternativeColours = {
@@ -86,8 +87,7 @@ export class SideNav {
                                 } else {
                                     this.buildButton(component, unit.element, alternativeColours);
                                 }
-                            }
-                            else {
+                            }  else {
                                 this.buildButton(component, unit.element, colours);
                             } 
                         }
@@ -100,7 +100,7 @@ export class SideNav {
         setTimeout(() => {
             this.checkSideNavOverflow();
             this.animateIcons();
-        }, 100);
+        }, 50);
     }
 
     buildButton(component, container, colours) {
@@ -136,11 +136,11 @@ export class SideNav {
         component.element.append(buttonHover);
 
         component.element.addEventListener('click', () => {
-            this.onButtonClick(component);
+            this.onButtonClick(component, colours);
         });
 
         component.element.addEventListener('mouseover', () => {
-            this.onButtonHover(component);
+            this.onButtonHover(component, colours);
         });
 
         component.element.addEventListener('mouseout', (e) => {
@@ -159,12 +159,12 @@ export class SideNav {
 
         var cssRules = `
             .ECUI-Panel-Side-Nav { max-width: 0px; position: relative; height: 100%; display: flex; flex-direction: row; width: auto; transition: max-width 0.5s; animation: sideNavAppearance; animation-duration: 3s; animation-fill-mode: forwards; }
-            .ECUI-Panel-Side-Nav-Component { position: relative; height: 100%; padding: 0px; display: flex; flex-direction: column; justify-content: space-between; direction: rtl; max-height: 100%; overflow: hidden; padding-bottom: 20px; ${this.blur} }
-            .ECUI-Panel-Side-Nav-Component-With-Border { position: relative; border-right-width: 1px; border-right-style: solid; padding: 0px; display: flex; flex-direction: column; justify-content: space-between; direction: rtl; max-height: 100%; overflow: hidden; padding-bottom: 20px; ${this.blur} }
-            .ECUI-Panel-Side-Nav-Background { width: 100%; position: absolute; left: 0%; top: 0%; object-fit: cover; }
+            .ECUI-Panel-Side-Nav-Component { position: relative; height: 100%; padding: 0px; display: flex; flex-direction: column; justify-content: space-between; direction: rtl; max-height: 100%; overflow: hidden; padding-bottom: 20px; order: 2; ${this.blur} }
+            .ECUI-Panel-Side-Nav-Component-With-Border { position: relative; border-right-width: 1px; border-right-style: solid; padding: 0px; display: flex; flex-direction: column; justify-content: space-between; direction: rtl; max-height: 100%; overflow: hidden; padding-bottom: 20px; order: 2; ${this.blur} }
+            .ECUI-Panel-Side-Nav-Background { width: 100%; height: 100%; position: absolute; left: 0%; top: 0%; object-fit: cover; }
 
-            .ECUI-Panel-Side-Nav-Background::-webkit-scrollbar-thumb, .ECUI-Panel-Side-Nav-Component-With-Border::-webkit-scrollbar { width: 6px; }
-            .ECUI-Panel-Side-Nav-Background::-webkit-scrollbar-thumb, .ECUI-Panel-Side-Nav-Component-With-Border::-webkit-scrollbar-thumb { border-radius: 1px; }
+            .ECUI-Panel-Side-Nav-Component::-webkit-scrollbar, .ECUI-Panel-Side-Nav-Component-With-Border::-webkit-scrollbar { width: 6px; }
+            .ECUI-Panel-Side-Nav-Component::-webkit-scrollbar-thumb, .ECUI-Panel-Side-Nav-Component-With-Border::-webkit-scrollbar-thumb { border-radius: 1px; }
 
             .ECUI-Panel-Side-Nav-Unit { display: flex; flex-direction: column; direction: ltr; }
             .ECUI-Panel-Side-Nav-Unit-Decoration { width: 100%; height: 20px; display: flex; flex-direction: row; justify-content: center; align-items: center; }
@@ -174,20 +174,16 @@ export class SideNav {
             
             .ECUI-Panel-Side-Nav-Button-Uppercase { text-transform: uppercase; }
         
-            .ECUI-Panel-Side-Nav-Button-Icon-Container { transform: translateX(-100px); animation: sideNavButtonsIconAppearance; animation-duration: 0.5s; animation-fill-mode: forwards; animation-play-state: paused; }
+            .ECUI-Panel-Side-Nav-Button-Icon-Container { transform: translateX(-100px); animation: sideNavButtonsIconAppearance; animation-duration: 0.5s; animation-fill-mode: forwards; animation-play-state: paused; pointer-events: none; }
             .ECUI-Panel-Side-Nav-Button-Icon { width: 30px; min-width: 30px; height: 30px; min-height: 30px; }
 
-            .ECUI-Panel-Side-Nav-Button-Text-Container { width: auto; max-width: 0px; overflow: hidden; transition: max-width 0.5s; opacity: 0; animation: sideNavButtonsTextAppearance; animation-duration: 0.5s; animation-fill-mode: forwards; animation-play-state: paused; }
-            .ECUI-Panel-Side-Nav-Button-Text { font-size: 13px; white-space: nowrap; padding: 0px 16px; }
-            .ECUI-Panel-Side-Nav:hover .ECUI-Panel-Side-Nav-Button-Text-Container { max-width: 1000px }
+            .ECUI-Panel-Side-Nav-Button-Text-Container { width: auto; max-width: 0px; overflow: hidden; transition: max-width 0.5s; opacity: 0; animation: sideNavButtonsTextAppearance; animation-duration: 0.5s; animation-fill-mode: forwards; animation-play-state: paused; pointer-events: none; }
+            .ECUI-Panel-Side-Nav-Button-Text { font-size: 1em; white-space: nowrap; padding: 0px 16px; }
+            .ECUI-Panel-Side-Nav:hover .ECUI-Panel-Side-Nav-Button-Text-Container { max-width: 500px }
             
-            .ECUI-Panel-Side-Nav-Button-Hover { position: absolute; right: 0px; top: 50%; width: 2px; height: 100%; transform: translateY(-50%); opacity: 0; }
-            .ECUI-Panel-Side-Nav-Button:hover .ECUI-Panel-Side-Nav-Button-Hover, .ECUI-Panel-Side-Nav-Button-With-Border:hover .ECUI-Panel-Side-Nav-Button-Hover { opacity: 1 }
-        
-            .ECUI-Panel-Sub-Side-Nav-Container { width: 200px; }
-            .ECUI-Panel-Sub-Side-Nav-Container-With-Border { width: 200px; }
-
-            @keyframes sideNavAppearance { 0% { max-width: 0px; } 100% { max-width: 1000px; } }
+            .ECUI-Panel-Side-Nav-Button-Hover { position: absolute; right: 0px; top: 50%; width: 2px; height: 0%; transform: translateY(-50%); opacity: 0; transition: 0.3s; pointer-events: none; }
+           
+            @keyframes sideNavAppearance { 0% { max-width: 0px; } 100% { max-width: 500px; } }
             @keyframes sideNavButtonsIconAppearance { 0% { transform: translateX(-100px) } 100% { transform: translateX(0px) } }
             @keyframes sideNavButtonsTextAppearance { 0% { opacity: 0px; } 100% { opacity: 1; } }
         `; 
@@ -218,45 +214,71 @@ export class SideNav {
     }
 
     animateIcons() {
-        const iconContainers = document.querySelectorAll('.ECUI-Panel-Side-Nav-Button-Icon-Container');
+        const iconContainers = this.element.querySelectorAll('.ECUI-Panel-Side-Nav-Button-Icon-Container');
         iconContainers.forEach((container, index) => {
             container.style.animationDelay = `${index * 0.05}s`;
             container.style.animationPlayState = 'running';
         });
         
-        const textContainers = document.querySelectorAll('.ECUI-Panel-Side-Nav-Button-Text-Container');
+        const textContainers = this.element.querySelectorAll('.ECUI-Panel-Side-Nav-Button-Text-Container');
         textContainers.forEach((container, index) => {
             container.style.animationDelay = `${index * 0.08}s`;
             container.style.animationPlayState = 'running';
         });
     }
 
-    onButtonClick(component) {
+    onButtonClick(component, colours) {
         if(!Utils.isNullOrEmpty(component.components)) {
-            this.onButtonHover(component);
+            this.onButtonHover(component, colours);
         }
     }
 
-    onButtonHover(component) {
-        var previousSubSideNav = document.querySelector(".ECUI-Panel-Sub-Side-Nav-Element");
-        if(previousSubSideNav) {
-            previousSubSideNav.remove();
-        }
-        if(!Utils.isNullOrEmpty(component.components)) {
-            console.log('Options:', component.components);
-            var subSideNavContainer = document.createElement("div");
-            subSideNavContainer.className = `${this.ECUI.ECUI_Theme.classes.sideNav} ${this.ECUI.ECUI_Theme.classes.sideNavScrollBar} ${this.ECUI.ECUI_Theme.classes.sideNavShadow} ECUI-Panel-Sub-Side-Nav-Container ECUI-Panel-Sub-Side-Nav-Element`;
-            if(!Utils.isNullOrEmpty(this.ECUI.ECUI_Theme.colours.sideNavBorder)) {
-                subSideNavContainer.className = `${this.ECUI.ECUI_Theme.classes.sideNav} ${this.ECUI.ECUI_Theme.classes.sideNavScrollBar} ${this.ECUI.ECUI_Theme.classes.sideNavBorder} ${this.ECUI.ECUI_Theme.classes.sideNavShadow} ECUI-Panel-Sub-Side-Nav-Container-With-Border ECUI-Panel-Sub-Side-Nav-Element`;
+    onButtonHover(component, colours) {
+        component.element.querySelector(".ECUI-Panel-Side-Nav-Button-Hover").style.height = "100%";
+        component.element.querySelector(".ECUI-Panel-Side-Nav-Button-Hover").style.opacity = 1;
+        component.element.style.backgroundColor = this.ECUI.ECUI_Theme.colours.sideNavButtonsHover;
+
+        if(!Utils.isNullOrEmpty(component.components) && component.components.find(c => c.componentId == "subSideNav")) {
+            var subSideNavComponent = component.components.find(c => c.componentId == "subSideNav");
+            if(this.components.find(c => c.componentId == "subSideNav" && c.id != subSideNavComponent.id)) {
+                this.removeSubSideNav();
             }
-            this.element.append(subSideNavContainer);
+            if(!this.components.find(c => c.componentId == "subSideNav")) {
+                var subSideNav = new SubSideNav(this.ECUI, subSideNavComponent, colours, component.icon);
+                this.components.push(subSideNav);
+                subSideNav.element.addEventListener('mouseout', (e) => {
+                    this.OnButtonHoverOut(component, e);
+                });
+                this.element.append(subSideNav.element);
+                subSideNavComponent.element = subSideNav.element;
+            }
+        } else {
+            this.removeSubSideNav();
+        }
+    }
+
+    removeSubSideNav() {
+        if(this.components.find(c => c.componentId == "subSideNav")) {
+            var subSideNav = this.components.find(c => c.componentId == "subSideNav");
+            subSideNav.element.remove();
+            this.components = this.components.filter(c => c.componentId != "subSideNav");
         }
     }
 
     OnButtonHoverOut(component, event) {
-        var subSideNav = document.querySelector(".ECUI-Panel-Sub-Side-Nav-Element");
-        if(subSideNav && !subSideNav.contains(event.relatedTarget)) {
-            subSideNav.remove();
+        console.log("OUT");
+        if(this.components.find(c => c.componentId == "subSideNav")) {
+            var subSideNav = this.components.find(c => c.componentId == "subSideNav");
+            if(!subSideNav.element.contains(event.relatedTarget)) { 
+                component.element.querySelector(".ECUI-Panel-Side-Nav-Button-Hover").style.height = "0%";
+                component.element.querySelector(".ECUI-Panel-Side-Nav-Button-Hover").style.opacity = 0;
+                component.element.style.backgroundColor = null;
+                this.removeSubSideNav();
+            }    
+        } else {
+            component.element.querySelector(".ECUI-Panel-Side-Nav-Button-Hover").style.height = "0%";
+            component.element.querySelector(".ECUI-Panel-Side-Nav-Button-Hover").style.opacity = 0;
+            component.element.style.backgroundColor = null;
         }
     }
 

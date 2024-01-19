@@ -24,6 +24,8 @@ function importExamples() {
       ECUI.removeLoader();
       getDefaultExample();
       //getBrightExample();
+      //getFexillonExample();
+      //getTeamsExample();
     }).catch((error) => {
       console.error('Themes import failed:', error);
     });
@@ -44,6 +46,7 @@ function getFexillonExample() {
   ECUI.buildTheme(Themes.getTheme("fexillon"));
   var fexillonPanels = [];
   fexillonPanels.push(Panels.getPanel("fexillon", "header"));
+  fexillonPanels.push(Panels.getPanel("fexillon", "sideNav"))
   ECUI.loadPanels(fexillonPanels);
 }
 
@@ -51,6 +54,7 @@ function getBrightExample() {
   ECUI.buildTheme(Themes.getTheme("bright"));
   var brightPanels = [];
   brightPanels.push(Panels.getPanel("bright", "header"));
+  brightPanels.push(Panels.getPanel("bright", "sideNav"))
   ECUI.loadPanels(brightPanels);
 }
 
@@ -58,5 +62,6 @@ function getTeamsExample() {
   ECUI.buildTheme(Themes.getTheme("teams"));
   var teamsPanels = [];
   teamsPanels.push(Panels.getPanel("teams", "header"));
+  teamsPanels.push(Panels.getPanel("teams", "sideNav"))
   ECUI.loadPanels(teamsPanels);
 }

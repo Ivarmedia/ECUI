@@ -70,7 +70,19 @@ export function getDefaultColours() {
         sideNavButtonsSecondaryIcons: "#EFEBF1",
         sideNavButtonsIconsBorder: "",
         sideNavButtonsText: "#e3e6ef",
-        sideNavButtonsTextHover: "#e3e6ef" 
+        sideNavButtonsTextHover: "red",
+        subSideNav: '#32475d14',
+        subSideNavBorder: '#171e2a',
+        subSideNavShadow: '1px 0px 5px rgb(7 10 17 / 73%)',
+        subSideNavContrast: "#14151b78",
+        subSideNavContrastShadow: "inset 0px 0px 5px #0000005c",
+        subSideNavScrollBar: "#233952",
+        subSideNavText: "#e3e6ef",
+        subSideNavButtons: "#507eaf17",
+        subSideNavButtonsBorder: "#171e2a",
+        subSideNavButtonsShadow: "1px 0px 5px #070a11ba",
+        subSideNavButtonsHover: "#6ca3de33",
+        subSideNavButtonsText: "#e3e6ef",
     }
     return colours;
 }

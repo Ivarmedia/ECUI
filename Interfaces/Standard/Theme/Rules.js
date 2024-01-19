@@ -260,6 +260,66 @@ export function getRules(classes, colours, fonts) {
                 color: ${colours.sideNavButtonsTextHover};
             }
 
+        /* Sub Side Navigation Bar */
+
+            .${classes.subSideNav} {
+                background-color: ${colours.subSideNav};
+            }
+
+            .${classes.subSideNavBorder} {
+                border-color: ${colours.subSideNavBorder};
+            }
+
+            .${classes.subSideNavShadow} {
+                box-shadow: ${colours.subSideNavShadow};
+            }
+
+            .${classes.subSideNavContrast} {
+                background-color: ${colours.subSideNavContrast};
+            }
+
+            .${classes.subSideNavContrastShadow} {
+                box-shadow: ${colours.subSideNavContrastShadow};
+            }
+
+            .${classes.subSideNavScrollBar}::-webkit-scrollbar-thumb {
+                background-color: ${colours.subSideNavScrollBar};
+            }
+
+            .${classes.subSideNavText} {
+                color: ${colours.subSideNavText};
+            }
+
+            .${classes.subSideNavText}::placeholder {
+                color: ${colours.subSideNavText};
+                opacity: 0.8;
+            }
+
+        /* Sub Side Navigation Bar Buttons */
+
+            .${classes.subSideNavButtons}{
+                background-color: ${colours.subSideNavButtons};
+            }
+
+            .${classes.subSideNavButtonsBorder} {
+                border-color: ${colours.subSideNavButtonsBorder};
+            }
+
+            .${classes.subSideNavButtonsShadow} {
+                box-shadow: ${colours.subSideNavButtonsShadow};
+            }
+
+            .${classes.subSideNavButtonsHover}:hover {
+                background-color: ${colours.subSideNavButtonsHover};
+            }
+
+            .${classes.subSideNavButtonsText}{
+                color: ${colours.subSideNavButtonsText};
+            }
+
+
+
+
     `;
     return cssRules;
 }

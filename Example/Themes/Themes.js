@@ -5,6 +5,7 @@ import { getTeamsTheme } from "./Teams.js";
 
 export function getTheme(name) {
     var theme = getDefaultTheme();
+    theme.fonts
     if(name == "bright") {
         theme = getBrightTheme();
     } else if (name == "fexillon") {
