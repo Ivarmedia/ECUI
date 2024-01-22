@@ -1,6 +1,6 @@
 export function getDefaultTheme() {
     var themeInfo = { 
-        style: "Standard", 
+        style: "standard", 
         backgroundImg: "./Resources/Images/Background.jpg", 
         backgroundOpacity: 1
     }

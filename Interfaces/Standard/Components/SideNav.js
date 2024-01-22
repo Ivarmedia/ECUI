@@ -266,7 +266,6 @@ export class SideNav {
     }
 
     OnButtonHoverOut(component, event) {
-        console.log("OUT");
         if(this.components.find(c => c.componentId == "subSideNav")) {
             var subSideNav = this.components.find(c => c.componentId == "subSideNav");
             if(!subSideNav.element.contains(event.relatedTarget)) { 

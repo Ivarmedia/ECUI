@@ -12,9 +12,9 @@ export function buildTheme(themeInfo) {
 }
 
 export function setInterface(container, theme, global) {
-    if(theme.style == "Space") {
+    if(theme.style == "space") {
         return new SpaceUI(container, theme, global);
-    } else if(theme.style == "Secret") {
+    } else if(theme.style == "secret") {
         return new SecretUI(container, theme, global);
     } else {
         return new StandardUI(container, theme, global);
